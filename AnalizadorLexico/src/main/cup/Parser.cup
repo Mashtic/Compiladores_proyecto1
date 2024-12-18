@@ -1,0 +1,54 @@
+package cup;
+
+import java_cup.runtime.*;
+import jflex.LexerCup;
+
+action code
+{:
+
+    public void hola(){
+        System.out.println("Hola mundo");
+    }
+
+:}
+
+parser code {:
+
+    LexerCup lexer;
+
+    @SuppressWarnings("deprecation")
+    public parser(LexerCup lexer){
+        this.lexer = lexer;
+        this.symbolFactory = new DefaultSymbolFactory();
+    }
+:}
+
+init with {: :};
+
+scan with {: return lexer.next_token(); :};
+
+/* Terminales */
+terminal LIT_ENTERO, LIT_DECIMAL, IDENTIFICADOR; /* Generales */
+
+terminal INTEGER, FLOAT, BOOL, CHAR, STRING; /* Tipos */
+terminal COMENTARIO_LINEA, COMENTARIO_VARIAS_LINEAS; /* Estructura */
+terminal BLOQUE_A, BLOQUE_C; /* Estructura */
+terminal MAIN; /* Estructura */
+terminal CORCHETE_A, CORCHETE_C; /* Simbolos */
+terminal PARENTESIS_A, PARENTESIS_C; /* Simbolos */
+terminal ASIGNACION; /* Simbolos */
+terminal DELIMITADOR; /* Simbolos */
+terminal SUMA, RESTA, DIVISION, MULTIPLICACION, MODULO, POTENCIA, INCREMENTO, DECREMENTO; /* Operadores aritméticos */
+terminal MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL, IGUALDAD, DIFERENTE; /* Operadores relacionales */
+terminal CONJUNCION, DISYUNCION, NEGACION; /* Operadores lógicos */
+terminal IF, ELSE, WHILE, FOR, SWITCH, CASE, DEFAULT, BREAK, RETURN, DOS_PUNTOS; /* Estructuras de control */
+terminal PRINT, READ; /* Operaciones de lectura */
+
+non terminal programa, programaAux;
+
+// Produccion de inicio
+start with programa;
+
+// Producciones
+programa ::= programaAux;
+programa ::= INTEGER;
