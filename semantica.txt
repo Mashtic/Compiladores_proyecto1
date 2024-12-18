@@ -1,0 +1,58 @@
+### Tipos básicos
+tipos -> 'int' | 'char' | 'string' | 'float' | 'bool'
+literales -> 'l_int' | 'l_char' | 'l_string' | 'l_float' | 'l_bool'
+l_bool -> 'false' | 'true'
+
+### Operadores
+operadores_arit -> '+' | '-' | '*' | '/' | '%'
+operadores_rel -> '==' | '!=' | '<' | '<=' | '>' | '>='
+operadores_log -> '&&' | '||' | '!'
+
+### Estructura del programa
+miPrograma -> funciones
+
+### Definición de funciones
+funciones -> funcion | funciones funcion
+funcion -> encabezadoFunc bloque
+enabezadoFunc -> tipos identificador parametros
+
+# Definición de parámetros
+parametros -> '(' ')' | '(' paramAux ')'
+paramAux -> parametro | paramAux ',' parametro
+parametro -> tipos identificador
+
+### Instrucciones
+instrucciones -> sentencia | instrucciones sentencia
+sentencia -> creacion | creacionAsign | condicional | iteracion | retorno
+bloque -> '{' instrucciones '}'
+
+### Declaraciones y asignaciones
+creacion -> tipos identificador ';'
+creacionAsign -> tipos identificador '=' literales ';'
+
+### Condicionales
+condicional -> 'if' '(' expresion ')' bloque ('else' bloque)?
+
+### Iteración
+iteracion -> 'while' '(' expresion ')' bloque
+
+### Retorno
+retorno -> 'return' expresion ';'
+
+### Expresiones
+# Definición de una expresión
+expresion -> expresionArit | expresionRel | expresionLogica | literales
+expresionArit -> expresionArit operadores_arit term | term
+term -> factor | term operadores_arit factor
+factor -> identificador | literales | '(' expresion ')'
+expresionRel -> expresion operadores_rel expresion
+expresionLogica -> expresionLogica operadores_log expresion | '!' expresion
+
+### Identificadores
+identificador -> _[a-zA-Z0-9_]+_ // Con formato del proyecto
+
+### Verificación de tipos y operaciones
+verificaTipo -> tipos '=' tipos | error
+
+programa ::= funciones;
+funciones ::= funcion | funciones funcion;

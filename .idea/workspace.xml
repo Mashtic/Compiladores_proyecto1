@@ -31,14 +31,14 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1",
+    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1/AnalizadorLexico",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.18390805",
     "vue.rearranger.settings.migration": "true"
   }
@@ -75,6 +75,7 @@
       <workItem from="1734530676399" duration="270000" />
       <workItem from="1734531130608" duration="769000" />
       <workItem from="1734533364247" duration="1098000" />
+      <workItem from="1734540047625" duration="927000" />
     </task>
     <servers />
   </component>
