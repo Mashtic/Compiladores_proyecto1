@@ -50,7 +50,7 @@ saltoDeLinea=[\n] // No funciona
 {digito}+ { tokensTable.addToken(new Token("LIT_ENTERO", yytext(), yyline, yycolumn)); return symbol(sym.LIT_ENTERO); }
 {digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_DECIMAL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_DECIMAL); }
 <YYINITIAL> "_verano_" { tokensTable.addToken(new Token("MAIN", yytext(), yyline, yycolumn)); return symbol(sym.MAIN); }
-<YYINITIAL> "_"({letra}|{digito})+"_" { tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR); }
+<YYINITIAL> "_"({letra}|{digito}|_)+"_" { tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR); }
 
 /* Tipos */
 <YYINITIAL> "rodolfo" { tokensTable.addToken(new Token("INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.INTEGER); }
