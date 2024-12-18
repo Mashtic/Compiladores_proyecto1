@@ -14,7 +14,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -31,7 +31,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1",
+    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1/AnalizadorLexico",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -73,7 +73,7 @@
       <option name="presentableId" value="Default" />
       <updated>1734530675444</updated>
       <workItem from="1734530676399" duration="270000" />
-      <workItem from="1734531130608" duration="542000" />
+      <workItem from="1734531130608" duration="769000" />
     </task>
     <servers />
   </component>
