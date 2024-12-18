@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48fb0976-c6f5-4d10-8fb6-103c3e1d73dd" name="Changes" comment="" />
+    <list default="true" id="48fb0976-c6f5-4d10-8fb6-103c3e1d73dd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AnalizadorLexico/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/AnalizadorLexico/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,7 +35,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1/AnalizadorLexico",
+    "last_opened_file_path": "C:/Users/sotic/OneDrive/Documentos/GitHub/Compiladores_proyecto1",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -74,6 +78,7 @@
       <updated>1734530675444</updated>
       <workItem from="1734530676399" duration="270000" />
       <workItem from="1734531130608" duration="769000" />
+      <workItem from="1734533364247" duration="958000" />
     </task>
     <servers />
   </component>

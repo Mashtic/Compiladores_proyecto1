@@ -35,6 +35,6 @@ public class Main {
         FileManager.writeFile(rutaArchivoResultados, "prueba.txt", resultado);
 
         // Eliminar las clases anteriores (creadas por plugins) acá si existen
-        
+
     }
 }
