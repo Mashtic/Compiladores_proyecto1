@@ -11,7 +11,8 @@ import tokens.TokenTable;
 public class Main {
     public static void main(String[] args) {
 
-        String expr = FileManager.getFileContent("C:\\Users\\sotic\\Downloads\\Lexer\\untitled\\pruebas\\code.txt");
+        String rutaArchivo = "";
+        String expr = FileManager.getFileContent(rutaArchivo); // Ruta concreta
         LexerCup lexer = new LexerCup(new StringReader(expr));
         TokenTable tabla = lexer.getTokenTable();
 
@@ -26,7 +27,8 @@ public class Main {
         }
         String resultado = tabla.toString();
 
-        FileManager.writeFile("C:\\Users\\sotic\\Downloads\\Lexer\\untitled\\resultados", "prueba.txt", resultado);
+        String rutaArchivoResultados = ""; // Ruta donde van los resultados
+        FileManager.writeFile(rutaArchivoResultados, "prueba.txt", resultado);
 
     }
 }
