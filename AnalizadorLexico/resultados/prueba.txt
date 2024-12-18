@@ -1,0 +1,8 @@
+Tipo: BLOQUE_A	Lexema: abrecuento	Linea: 0	Columna:1
+Tipo: IDENTIFICADOR	Lexema: _perro_	Linea: 0	Columna:12
+Tipo: BLOQUE_C	Lexema: cierracuento	Linea: 0	Columna:20
+Tipo: IF	Lexema: elfo	Linea: 0	Columna:33
+Tipo: ELSE	Lexema: hada	Linea: 0	Columna:38
+Tipo: WHILE	Lexema: envuelve	Linea: 0	Columna:43
+Tipo: DEFAULT	Lexema: ultimo	Linea: 0	Columna:52
+Tipo: MAIN	Lexema: _verano_	Linea: 0	Columna:59
