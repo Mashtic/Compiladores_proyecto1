@@ -11,6 +11,10 @@ import tokens.TokenTable;
 public class Main {
     public static void main(String[] args) {
 
+        // Necesario (creo) mover las clases creadas en target
+        // Por ahora no detecta LexerCup
+
+
         String rutaArchivo = "";
         String expr = FileManager.getFileContent(rutaArchivo); // Ruta concreta
         LexerCup lexer = new LexerCup(new StringReader(expr));
@@ -30,5 +34,7 @@ public class Main {
         String rutaArchivoResultados = ""; // Ruta donde van los resultados
         FileManager.writeFile(rutaArchivoResultados, "prueba.txt", resultado);
 
+        // Eliminar las clases anteriores (creadas por plugins) acá si existen
+        
     }
 }
