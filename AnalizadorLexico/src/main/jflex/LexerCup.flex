@@ -42,9 +42,11 @@ saltoDeLinea=[\n] // No funciona
 %state STRING
 
 %%
+// NECESARIO REVISARLAS
+
 /* Generales */
 {espacio} {/*Ignore*/}
-{saltoDeLinea} {/*Ignore*/}
+{saltoDeLinea} {/*Ignore*/} // No funciona
 {digito}+ { tokensTable.addToken(new Token("LIT_ENTERO", yytext(), yyline, yycolumn)); return symbol(sym.LIT_ENTERO); }
 {digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_DECIMAL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_DECIMAL); }
 <YYINITIAL> "_verano_" { tokensTable.addToken(new Token("MAIN", yytext(), yyline, yycolumn)); return symbol(sym.MAIN); }
