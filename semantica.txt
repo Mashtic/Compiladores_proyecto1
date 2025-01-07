@@ -1,58 +1,69 @@
-### Tipos básicos
-tipos -> 'int' | 'char' | 'string' | 'float' | 'bool'
-literales -> 'l_int' | 'l_char' | 'l_string' | 'l_float' | 'l_bool'
-l_bool -> 'false' | 'true'
+# Terminales utilizados en cup
+terminal LIT_ENTERO, LIT_DECIMAL, LIT_BOOL, IDENTIFICADOR; /* Generales */
+terminal INTEGER, FLOAT, BOOL, CHAR, STRING; /* Tipos */
+terminal COMENTARIO_LINEA, COMENTARIO_VARIAS_LINEAS; /* Estructura */
+terminal BLOQUE_A, BLOQUE_C; /* Estructura */
+terminal MAIN; /* Estructura */
+terminal CORCHETE_A, CORCHETE_C; /* Simbolos */
+terminal PARENTESIS_A, PARENTESIS_C; /* Simbolos */
+terminal ASIGNACION; /* Simbolos */
+terminal DELIMITADOR; /* Simbolos */
+terminal SUMA, RESTA, DIVISION, MULTIPLICACION, MODULO, POTENCIA, INCREMENTO, DECREMENTO; /* Operadores aritméticos */
+terminal MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL, IGUALDAD, DIFERENTE; /* Operadores relacionales */
+terminal CONJUNCION, DISYUNCION, NEGACION; /* Operadores lógicos */
+terminal IF, ELSE, WHILE, FOR, SWITCH, CASE, DEFAULT, BREAK, RETURN, DOS_PUNTOS; /* Estructuras de control */
+terminal PRINT, READ; /* Operaciones de lectura */
+
+# Semántica del lenguaje
+## Tipos básicos
+tipos -> INTEGER | FLOAT | BOOL | CHAR | STRING
+literales -> LIT_ENTERO, LIT_DECIMAL, LIT_BOOL
+l_bool -> FALSE, TRUE
 
 ### Operadores
-operadores_arit -> '+' | '-' | '*' | '/' | '%'
-operadores_rel -> '==' | '!=' | '<' | '<=' | '>' | '>='
-operadores_log -> '&&' | '||' | '!'
+operadores_arit -> SUMA | RESTA | MULTIPLICACION | DIVISION | MODULO
+operadores_rel -> MENOR | MENOR_IGUAL | MAYOR | MAYOR_IGUAL | IGUALDAD | DIFERENTE
+operadores_log -> CONJUNCION | DISYUNCION | NEGACION
 
 ### Estructura del programa
-miPrograma -> funciones
+miPrograma -> funciones | instrucciones funciones | instrucciones
 
 ### Definición de funciones
 funciones -> funcion | funciones funcion
 funcion -> encabezadoFunc bloque
-enabezadoFunc -> tipos identificador parametros
+enabezadoFunc -> tipos IDENTIFICADOR parametros
 
 # Definición de parámetros
-parametros -> '(' ')' | '(' paramAux ')'
+parametros -> PARENTESIS_A PARENTESIS_C | PARENTESIS_A paramAux PARENTESIS_C
 paramAux -> parametro | paramAux ',' parametro
-parametro -> tipos identificador
+parametro -> tipos IDENTIFICADOR
 
 ### Instrucciones
 instrucciones -> sentencia | instrucciones sentencia
 sentencia -> creacion | creacionAsign | condicional | iteracion | retorno
-bloque -> '{' instrucciones '}'
+bloque -> CORCHETE_A instrucciones CORCHETE_C
 
 ### Declaraciones y asignaciones
-creacion -> tipos identificador ';'
-creacionAsign -> tipos identificador '=' literales ';'
+creacion -> tipos IDENTIFICADOR DELIMITADOR
+creacionAsign -> tipos IDENTIFICADOR ASIGNACION (literales | IDENTIFICADOR) DELIMITADOR
 
 ### Condicionales
-condicional -> 'if' '(' expresion ')' bloque ('else' bloque)?
+condicional -> IF PARENTESIS_A expresion PARENTESIS_C bloque (ELSE bloque)?
 
 ### Iteración
-iteracion -> 'while' '(' expresion ')' bloque
+iteracion -> WHILE PARENTESIS_A expresion PARENTESIS_C bloque
 
 ### Retorno
-retorno -> 'return' expresion ';'
+retorno -> RETURN expresion DELIMITADOR
 
 ### Expresiones
 # Definición de una expresión
 expresion -> expresionArit | expresionRel | expresionLogica | literales
 expresionArit -> expresionArit operadores_arit term | term
 term -> factor | term operadores_arit factor
-factor -> identificador | literales | '(' expresion ')'
+factor -> IDENTIFICADOR | literales | PARENTESIS_A expresion PARENTESIS_C
 expresionRel -> expresion operadores_rel expresion
-expresionLogica -> expresionLogica operadores_log expresion | '!' expresion
-
-### Identificadores
-identificador -> _[a-zA-Z0-9_]+_ // Con formato del proyecto
+expresionLogica -> expresionLogica operadores_log expresion | NEGACION expresion
 
 ### Verificación de tipos y operaciones
-verificaTipo -> tipos '=' tipos | error
-
-programa ::= funciones;
-funciones ::= funcion | funciones funcion;
+verificaTipo -> tipos ASIGNACION tipos | error
