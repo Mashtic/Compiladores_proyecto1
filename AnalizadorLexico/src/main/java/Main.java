@@ -11,12 +11,14 @@ import tokens.TokenTable;
 public class Main {
     public static void main(String[] args) {
 
-        // Necesario (creo) mover las clases creadas en target
-        // Por ahora no detecta LexerCup
+        // Path del proyecto
+        String currentDirectory = System.getProperty("user.dir");
 
+        // Ruta del archivo de pruebas
+        String rutaArchivo = currentDirectory + "\\pruebas\\code.txt";
+        String expr = FileManager.getFileContent(rutaArchivo);
 
-        String rutaArchivo = "";
-        String expr = FileManager.getFileContent(rutaArchivo); // Ruta concreta
+        // Trabajo del lexer
         LexerCup lexer = new LexerCup(new StringReader(expr));
         TokenTable tabla = lexer.getTokenTable();
 
@@ -29,12 +31,9 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String resultado = tabla.toString();
 
-        String rutaArchivoResultados = ""; // Ruta donde van los resultados
-        FileManager.writeFile(rutaArchivoResultados, "prueba.txt", resultado);
-
-        // Eliminar las clases anteriores (creadas por plugins) acá si existen
-
+        // Path del resultado
+        String rutaArchivoResultados = currentDirectory + "\\resultados";
+        FileManager.writeFile(rutaArchivoResultados, "resultado.txt", tabla.toString());
     }
 }

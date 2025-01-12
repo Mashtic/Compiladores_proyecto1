@@ -28,12 +28,13 @@ init with {: :};
 scan with {: return lexer.next_token(); :};
 
 /* Terminales */
-terminal LIT_ENTERO, LIT_DECIMAL, IDENTIFICADOR, CADENA_CARACTERES; /* Generales */
+terminal LIT_ENTERO, LIT_DECIMAL, UNICO_CARACTER, CADENA_CARACTERES, IDENTIFICADOR; /* Generales */
 
 terminal INTEGER, FLOAT, BOOL, CHAR, STRING; /* Tipos */
-terminal COMENTARIO_LINEA, COMENTARIO_VARIAS_LINEAS; /* Estructura */
+terminal TRUE, FALSE; /* Tipos */
 terminal BLOQUE_A, BLOQUE_C; /* Estructura */
 terminal MAIN; /* Estructura */
+terminal COMA, PUNTO_COMA; /* Estructura */
 terminal CORCHETE_A, CORCHETE_C; /* Simbolos */
 terminal PARENTESIS_A, PARENTESIS_C; /* Simbolos */
 terminal ASIGNACION; /* Simbolos */
