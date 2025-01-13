@@ -76,12 +76,16 @@ retorno -> RETURN (expresion)? DELIMITADOR
 
 ### Expresiones
 # Definición de una expresión
-expresion -> expresionUnaria | expresionArit | expresionRel | expresionLogica | literales
-expresionUnaria -> '#' IDENTIFICADOR
-                 | '~' IDENTIFICADOR
-                 | '^' IDENTIFICADOR
-                 | '_' IDENTIFICADOR
-                 | '@' IDENTIFICADOR
+expresion -> expresion_unaria_cadena | expresion_unaria_entero | expresionArit | expresionRel | expresionLogica | literales
+expresion_unaria_cadena -> IDENTIFICADOR '#' 
+                 | IDENTIFICADOR '~' 
+                 | IDENTIFICADOR '^' 
+                 | IDENTIFICADOR '_' 
+                 | IDENTIFICADOR '@' 
+expresion_unaria_entero -> IDENTIFICADOR INCREMENTO
+                        | IDENTIFICADOR DECREMENTO
+                        | INTEGER INCREMENTO
+                        | INTEGER DECREMENTO
 expresionArit -> expresionArit operadores_arit term | term
 term -> factor | term operadores_arit factor
 factor -> IDENTIFICADOR | literales | PARENTESIS_A expresion PARENTESIS_C
