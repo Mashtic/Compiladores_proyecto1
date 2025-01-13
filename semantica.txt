@@ -1,9 +1,9 @@
 # Terminales utilizados en cup
-terminal LIT_ENTERO, LIT_DECIMAL, LIT_BOOL, IDENTIFICADOR; /* Generales */
 terminal INTEGER, FLOAT, BOOL, CHAR, STRING; /* Tipos */
-terminal COMENTARIO_LINEA, COMENTARIO_VARIAS_LINEAS; /* Estructura */
+terminal TRUE, FALSE; /* Tipos */
 terminal BLOQUE_A, BLOQUE_C; /* Estructura */
 terminal MAIN; /* Estructura */
+terminal COMA, PUNTO_COMA; /* Estructura */
 terminal CORCHETE_A, CORCHETE_C; /* Simbolos */
 terminal PARENTESIS_A, PARENTESIS_C; /* Simbolos */
 terminal ASIGNACION; /* Simbolos */
@@ -17,16 +17,19 @@ terminal PRINT, READ; /* Operaciones de lectura */
 # Semántica del lenguaje
 ## Tipos básicos
 tipos -> INTEGER | FLOAT | BOOL | CHAR | STRING
-literales -> LIT_ENTERO, LIT_DECIMAL, LIT_BOOL
+tipos_arreglos -> INTEGER | CHAR
+literales -> INTEGER | FLOAT | l_bool | CHAR | STRING
 l_bool -> FALSE, TRUE
 
 ### Operadores
 operadores_arit -> SUMA | RESTA | MULTIPLICACION | DIVISION | MODULO
-operadores_rel -> MENOR | MENOR_IGUAL | MAYOR | MAYOR_IGUAL | IGUALDAD | DIFERENTE
+operadores_rel_num -> MENOR | MENOR_IGUAL | MAYOR | MAYOR_IGUAL | IGUALDAD | DIFERENTE
+operadores_rel_bool -> IGUALDAD | DIFERENTE
 operadores_log -> CONJUNCION | DISYUNCION | NEGACION
 
 ### Estructura del programa
-miPrograma -> funciones | instrucciones funciones | instrucciones
+miPrograma -> main
+main -> MAIN DOS_PUNTOS funciones
 
 ### Definición de funciones
 funciones -> funcion | funciones funcion
@@ -35,35 +38,52 @@ enabezadoFunc -> tipos IDENTIFICADOR parametros
 
 # Definición de parámetros
 parametros -> PARENTESIS_A PARENTESIS_C | PARENTESIS_A paramAux PARENTESIS_C
-paramAux -> parametro | paramAux ',' parametro
+paramAux -> parametro | paramAux COMA parametro
 parametro -> tipos IDENTIFICADOR
 
-### Instrucciones
+### Bloque
+bloque -> BLOQUE_A instrucciones BLOQUE_C
 instrucciones -> sentencia | instrucciones sentencia
-sentencia -> creacion | creacionAsign | condicional | iteracion | retorno
-bloque -> CORCHETE_A instrucciones CORCHETE_C
+sentencia -> creacion | creacionAsign | condicional | iteracion_while | iteracion_for | switch | salida | entrada | retorno
 
 ### Declaraciones y asignaciones
-creacion -> tipos IDENTIFICADOR DELIMITADOR
-creacionAsign -> tipos IDENTIFICADOR ASIGNACION (literales | IDENTIFICADOR) DELIMITADOR
+creacion -> tipos IDENTIFICADOR DELIMITADOR |
+            tipos_arreglos IDENTIFICADOR CORCHETE_A INTEGER CORCHETE_C DELIMITADOR
+creacionAsign -> tipos IDENTIFICADOR ASIGNACION (literales | IDENTIFICADOR | expresion | entrada) DELIMITADOR |
+                tipos_arreglos IDENTIFICADOR CORCHETE_A INTEGER CORCHETE_C ASIGNACION CORCHETE_A (asignArreglosAux){INTEGER} CORCHETE_C DELIMITADOR
+asignArreglosAux -> asignArreglos | asignArreglosAux COMA asignArreglos
+asignArreglos -> (INTEGER | IDENTIFICADOR | CHAR)
 
 ### Condicionales
-condicional -> IF PARENTESIS_A expresion PARENTESIS_C bloque (ELSE bloque)?
+condicional -> (IF PARENTESIS_A expresion PARENTESIS_C bloque)+ (ELSE bloque)?
 
-### Iteración
-iteracion -> WHILE PARENTESIS_A expresion PARENTESIS_C bloque
+### Iteraciones
+iteracion_while -> WHILE PARENTESIS_A expresion PARENTESIS_C bloque
+iteracion_for -> FOR PARENTESIS_A creacionAsign PUNTO_COMA expresion PUNTO_COMA creacionAsign PARENTESIS_C bloque
+
+### Switch
+switch -> SWITCH PARENTESIS_A expresion PARENTESIS_C BLOQUE_A casos_con_default BLOQUE_C
+casos_con_default -> casos DEFAULT DOS_PUNTOS bloque
+casos -> caso | casos caso
+caso -> CASE literales DOS_PUNTOS bloque
+
+### Entrada y salida
+salida -> PRINT PARENTESIS_A expresion PARENTESIS_C DELIMITADOR
+entrada -> READ PARENTESIS_A PARENTESIS_C DELIMITADOR
 
 ### Retorno
-retorno -> RETURN expresion DELIMITADOR
+retorno -> RETURN (expresion)? DELIMITADOR
 
 ### Expresiones
 # Definición de una expresión
-expresion -> expresionArit | expresionRel | expresionLogica | literales
+expresion -> expresionUnaria | expresionArit | expresionRel | expresionLogica | literales
+expresionUnaria -> '#' IDENTIFICADOR
+                 | '~' IDENTIFICADOR
+                 | '^' IDENTIFICADOR
+                 | '_' IDENTIFICADOR
+                 | '@' IDENTIFICADOR
 expresionArit -> expresionArit operadores_arit term | term
 term -> factor | term operadores_arit factor
 factor -> IDENTIFICADOR | literales | PARENTESIS_A expresion PARENTESIS_C
 expresionRel -> expresion operadores_rel expresion
 expresionLogica -> expresionLogica operadores_log expresion | NEGACION expresion
-
-### Verificación de tipos y operaciones
-verificaTipo -> tipos ASIGNACION tipos | error
