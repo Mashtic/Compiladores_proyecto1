@@ -34,25 +34,17 @@ import tokens.TokenTable;
     };
 %}
 
-letra = [a-zA-Z_]
+letra = [a-zA-Z]
 digito = [0-9]
 espacio = \r | \n | \r\n | [ \t\f]
 
 %state STRING
 
 %%
-// NECESARIO REVISARLAS
 
-/* Generales */
--?{digito}+ { tokensTable.addToken(new Token("LIT_ENTERO", yytext(), yyline, yycolumn)); return symbol(sym.LIT_ENTERO); }
--?{digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_DECIMAL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_DECIMAL); }
--?{digito}+ { tokensTable.addToken(new Token("LIT_ENTERO", yytext(), yyline, yycolumn)); return symbol(sym.LIT_ENTERO); }
-
-\'.?\' { tokensTable.addToken(new Token("UNICO_CARACTER", yytext(), yyline, yycolumn)); return symbol(sym.UNICO_CARACTER); }
-\".*\" { tokensTable.addToken(new Token("CADENA_CARACTERES", yytext(), yyline, yycolumn)); return symbol(sym.CADENA_CARACTERES); }
-
+/* Identificadores */
 <YYINITIAL> "_verano_" { tokensTable.addToken(new Token("MAIN", yytext(), yyline, yycolumn)); return symbol(sym.MAIN); }
-<YYINITIAL> "_"({letra}|{digito}|_)+"_" { tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR); }
+<YYINITIAL> "_"({letra}|{digito})({letra}|{digito}|_)*"_" { tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR); }
 
 /* Tipos */
 <YYINITIAL> "rodolfo" { tokensTable.addToken(new Token("INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.INTEGER); }
@@ -61,26 +53,15 @@ espacio = \r | \n | \r\n | [ \t\f]
 <YYINITIAL> "cupido" { tokensTable.addToken(new Token("CHAR", yytext(), yyline, yycolumn)); return symbol(sym.CHAR); }
 <YYINITIAL> "cometa" { tokensTable.addToken(new Token("STRING", yytext(), yyline, yycolumn)); return symbol(sym.STRING); }
 
-<YYINITIAL> "true"|"TRUE" { tokensTable.addToken(new Token("TRUE", yytext(), yyline, yycolumn)); return symbol(sym.TRUE); }
-<YYINITIAL> "false"|"FALSE" { tokensTable.addToken(new Token("FALSE", yytext(), yyline, yycolumn)); return symbol(sym.FALSE); }
+/* Objetos */
+-?{digito}+ { tokensTable.addToken(new Token("LIT_INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.LIT_INTEGER); }
+-?{digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.LIT_FLOAT); }
 
-<YYINITIAL> "," { tokensTable.addToken(new Token("COMA", yytext(), yyline, yycolumn)); return symbol(sym.COMA); }
-<YYINITIAL> ";" { tokensTable.addToken(new Token("PUNTO_COMA", yytext(), yyline, yycolumn)); return symbol(sym.PUNTO_COMA); }
+\'.?\' { tokensTable.addToken(new Token("LIT_CHAR", yytext(), yyline, yycolumn)); return symbol(sym.LIT_CHAR); }
+\".*\" { tokensTable.addToken(new Token("LIT_STRING", yytext(), yyline, yycolumn)); return symbol(sym.LIT_STRING); }
 
-/* Estructura */
-<YYINITIAL> "abrecuento" { tokensTable.addToken(new Token("BLOQUE_A", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_A); }
-<YYINITIAL> "cierracuento" { tokensTable.addToken(new Token("BLOQUE_C", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_C); }
-
-/* Simbolos */
-<YYINITIAL> "abreempaque" { tokensTable.addToken(new Token("CORCHETE_A", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_A); }
-<YYINITIAL> "cierraempaque" { tokensTable.addToken(new Token("CORCHETE_C", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_C); }
-
-<YYINITIAL> "abreregalo" { tokensTable.addToken(new Token("PARENTESIS_A", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_A); }
-<YYINITIAL> "cierraregalo" { tokensTable.addToken(new Token("PARENTESIS_C", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_C); }
-
-<YYINITIAL> "entrega" { tokensTable.addToken(new Token("ASIGNACION", yytext(), yyline, yycolumn)); return symbol(sym.ASIGNACION); }
-
-<YYINITIAL> "finregalo" { tokensTable.addToken(new Token("DELIMITADOR", yytext(), yyline, yycolumn)); return symbol(sym.DELIMITADOR); }
+<YYINITIAL> "true"|"TRUE" { tokensTable.addToken(new Token("LIT_BOOL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_BOOL); }
+<YYINITIAL> "false"|"FALSE" { tokensTable.addToken(new Token("LIT_BOOL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_BOOL); }
 
 /* Operadores aritmeticos */
 <YYINITIAL> "navidad" { tokensTable.addToken(new Token("SUMA", yytext(), yyline, yycolumn)); return symbol(sym.SUMA); }
@@ -117,14 +98,32 @@ espacio = \r | \n | \r\n | [ \t\f]
 <YYINITIAL> "envia" { tokensTable.addToken(new Token("RETURN", yytext(), yyline, yycolumn)); return symbol(sym.RETURN); }
 <YYINITIAL> "sigue" { tokensTable.addToken(new Token("DOS_PUNTOS", yytext(), yyline, yycolumn)); return symbol(sym.DOS_PUNTOS); }
 
+/* Símbolos de estructura */
+<YYINITIAL> "," { tokensTable.addToken(new Token("COMA", yytext(), yyline, yycolumn)); return symbol(sym.COMA); }
+<YYINITIAL> ";" { tokensTable.addToken(new Token("PUNTO_COMA", yytext(), yyline, yycolumn)); return symbol(sym.PUNTO_COMA); }
+
+<YYINITIAL> "abrecuento" { tokensTable.addToken(new Token("BLOQUE_A", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_A); }
+<YYINITIAL> "cierracuento" { tokensTable.addToken(new Token("BLOQUE_C", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_C); }
+
+<YYINITIAL> "abreempaque" { tokensTable.addToken(new Token("CORCHETE_A", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_A); }
+<YYINITIAL> "cierraempaque" { tokensTable.addToken(new Token("CORCHETE_C", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_C); }
+
+<YYINITIAL> "abreregalo" { tokensTable.addToken(new Token("PARENTESIS_A", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_A); }
+<YYINITIAL> "cierraregalo" { tokensTable.addToken(new Token("PARENTESIS_C", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_C); }
+
+<YYINITIAL> "entrega" { tokensTable.addToken(new Token("ASIGNACION", yytext(), yyline, yycolumn)); return symbol(sym.ASIGNACION); }
+
+<YYINITIAL> "finregalo" { tokensTable.addToken(new Token("DELIMITADOR", yytext(), yyline, yycolumn)); return symbol(sym.DELIMITADOR); }
+
 /* Operaciones de lectura */
 <YYINITIAL> "narra" { tokensTable.addToken(new Token("PRINT", yytext(), yyline, yycolumn)); return symbol(sym.PRINT); }
 <YYINITIAL> "escucha" { tokensTable.addToken(new Token("READ", yytext(), yyline, yycolumn)); return symbol(sym.READ); }
 
-/* Estructura */
-"\\_"(.|[ \t\f\r\n]+)*"_/" { /* Ignore */ }
-"#".* {/*Ignore*/}
+/* Ignorar */
+"\\_"(.|[ \t\f\r\n]+)*"_/" { /* Ignore */ } // Comentario multilínea
+"#".* {/*Ignore*/} // Comentario línea
+{espacio} {/*Ignore*/} // Espacios, tabs, saltos de línea...
 
-{espacio} {/*Ignore*/}
-
-[^] {throw new Error("Cadena ilegal <" + yytext() + ">");}
+[^] {
+        throw new Error("\nCadena ilegal <" + yytext() + ">\nLínea: " + (yyline+1) + "\nColumna: " + (yycolumn+1));
+    }

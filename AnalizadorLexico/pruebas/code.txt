@@ -1,22 +1,16 @@
- _a_
 \_
-#$! _ sad
+_verano_:
+    int _prueba_ () {
+        3+4;
+    }
 _/
 
-abrecuento cierracuento
-rodolfo bromista trueno cupido cometa
-324 -34 -1.3 0.0000001 true false 
-'!'
-"@$#%%$"
-abreempaque cierraempaque
-entrega
-abreregalo cierraregalo
-navidad intercambio reyes nochebuena magos adviento
-quien grinch
-snowball evergreen minstix upatree mary openslae
-melchor gaspar baltazar
+_verano_ sigue
+    rodolfo _prueba_ abreregalo cierraregalo abrecuento
+        4 navidad 3 finregalo
+        rodolfo _perro_ finregalo
+        cometa _gato_ finregalo
+        trueno _perro_ finregalo
+        rodolfo _ardilla_ finregalo
+    cierracuento
 finregalo
-elfo hada envuelve duende varios historia ultimo corta envia sigue
-narra escucha
-_verano_
-, ;

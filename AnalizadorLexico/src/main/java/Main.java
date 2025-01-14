@@ -1,6 +1,7 @@
 import managment.FileManager;
 
 import jflex.LexerCup;
+import cup.parser;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -20,20 +21,30 @@ public class Main {
 
         // Trabajo del lexer
         LexerCup lexer = new LexerCup(new StringReader(expr));
+        LexerCup lexer_parser = new LexerCup(new StringReader(expr));
         TokenTable tabla = lexer.getTokenTable();
 
         // NO SE PUEDE BORRAR
         try {
-            Symbol sim = lexer.next_token();
-            while (sim.sym != 0){
+            Symbol sim;
+            do{
                 sim = lexer.next_token();
-            }
+            } while (sim.sym != 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         // Path del resultado
         String rutaArchivoResultados = currentDirectory + "\\resultados";
         FileManager.writeFile(rutaArchivoResultados, "resultado.txt", tabla.toString());
+
+        // Parser
+        try{
+            parser p = new parser(lexer_parser);
+            p.parse();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
 }
