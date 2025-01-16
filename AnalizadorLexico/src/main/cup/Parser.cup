@@ -3,19 +3,32 @@ package cup;
 import java_cup.runtime.*;
 import jflex.LexerCup;
 
+//////////////////////// Código ////////////////////////
 action code
 {:
+    
+    // Manejo de errores
+    public int contadorErrores = 0;
 
-    public void hola(){
-        System.out.println("Hola mundo");
+    public void revisionCodigo(){
+        if (contadorErrores == 0){
+            System.out.println("Código semánticamente bien estructurado");
+        }
+        else{
+            throw new Error("Cantidad de errores semánticos encontrados: " + contadorErrores);
+        }
     }
 
+    public void errorEncontrado(){
+        contadorErrores += 1;
+        System.out.println("Sentencia mal estructurada");
+        System.out.println("Revise la semántica");
+    }
 :}
 
 parser code {:
-
-    int contadorErrores = 0;
-
+    
+    // Lectura de los tokens
     LexerCup lexer;
 
     @SuppressWarnings("deprecation")
@@ -23,7 +36,8 @@ parser code {:
         this.lexer = lexer;
         this.symbolFactory = new DefaultSymbolFactory();
     }
-
+    
+    // Recuperación de errores
     public void syntax_error(Symbol s){
         System.out.println("");
         System.out.println("Error R de sintáxis:" + s.value);
@@ -44,7 +58,7 @@ init with {: :};
 
 scan with {: return lexer.next_token(); :};
 
-// Terminales
+//////////////////////// Terminales ////////////////////////
 terminal MAIN, IDENTIFICADOR; /* Identificadores */
 terminal INTEGER, FLOAT, BOOL, CHAR, STRING; /* Tipos */
 terminal LIT_INTEGER, LIT_FLOAT, LIT_CHAR, LIT_STRING, LIT_BOOL; /* Objetos */
@@ -56,53 +70,206 @@ terminal CONJUNCION, DISYUNCION, NEGACION; /* Operadores lógicos */
 terminal IF, ELSE, WHILE, FOR,
         SWITCH, CASE, DEFAULT, BREAK,
         RETURN, DOS_PUNTOS; /* Estructuras de control */
-terminal COMA, PUNTO_COMA, BLOQUE_A,
+terminal COMA, PUNTO_COMA, NEGATIVO, BLOQUE_A,
         BLOQUE_C, CORCHETE_A, CORCHETE_C,
         PARENTESIS_A, PARENTESIS_C, ASIGNACION,
         DELIMITADOR; /* Símbolos de estructura */
 terminal PRINT, READ; /* Operaciones de lectura */
 
-// No terminales
+//////////////////////// No terminales ////////////////////////
 non terminal programa, main; /* Main */
-non terminal funciones, funcion, encabezado_func; /* Funciones */
+non terminal funciones, funcion, encabezado_func, llamado_funcion; /* Funciones */
 non terminal parametros, paramAux, parametro; /* Parámetros */
 non terminal bloque, instrucciones, sentencia; /* Bloques */
 non terminal creacion, creacion_unica, creacion_asign; /* Creaciones */
-non terminal asign; /* Asignaciones */
+non terminal asign, asign_arreglos_aux, asign_operador; /* Asignaciones */
 non terminal condicional_else, condicional_aux, condicional; /* Condicionales */
 non terminal iteracion, iteracion_while, iteracion_for; /* Iteraciones */
-non terminal switch, casos_con_default, casos, caso; /* Switch */
+non terminal switch, casos_con_default, casos_aux, caso; /* Switch */
 non terminal salida, entrada; /* Entrada y salida */
 non terminal break; /* Break */
 non terminal retorno; /* Retorno */
-non terminal expresion_booleana, expresion, expresion_aux, expresion_unaria_cadena, expresion_unaria_entero, expresion_arit, factor, expresion_rel, expresion_logica; /* Expresiones */
-non terminal tipos, literales, operadores_arit, operadores_rel_num, operadores_log; /* Generales */
+non terminal expresion, expresion_aux; /* Expresiones */
+non terminal expresion_arit, expresion_unaria_numero, factor; /* Expresiones */
+non terminal expresion_booleana, expresion_rel_num, expresion_rel_logico, expresion_logica; /* Expresiones */
+non terminal tipos, literales, operadores_arit, operadores_rel_num, operadores_log, simbolos_unarios_numero; /* Generales */
 
-// Precedencia
+//////////////////////// Precedencia ////////////////////////
+// Operadores aritméticos
 precedence left INCREMENTO, DECREMENTO;
 precedence left SUMA, RESTA;
 precedence left DIVISION, MULTIPLICACION;
 precedence left MODULO;
 precedence left POTENCIA;
 
+// Operadores relacionales
 precedence left MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL, IGUALDAD, DIFERENTE;
 
+// Operadores lógicos
 precedence left CONJUNCION, DISYUNCION;
 precedence left NEGACION;
 
-precedence left DELIMITADOR, PARENTESIS_C, IF;
+// Otros
+precedence left DELIMITADOR, PARENTESIS_C, IF, IDENTIFICADOR;
 
-// Producciones
-// Inicio
+//////////////////////// Producciones ////////////////////////
+/********************** Inicio **********************/
 start with programa;
 
-// Generales
+/********************** Main **********************/
+programa ::= main {: revisionCodigo(); :};
+
+main ::= MAIN DOS_PUNTOS funciones;
+
+/********************** Funciones **********************/
+funciones ::= funcion
+            | funciones funcion;
+
+funcion ::= encabezado_func bloque;
+
+encabezado_func ::= tipos IDENTIFICADOR parametros;
+
+llamado_funcion ::= IDENTIFICADOR parametros DELIMITADOR;
+
+/********************** Parámetros **********************/
+parametros ::= PARENTESIS_A PARENTESIS_C
+            | PARENTESIS_A paramAux PARENTESIS_C;
+
+paramAux ::= parametro
+            | paramAux COMA parametro;
+
+parametro ::= tipos IDENTIFICADOR;
+
+/********************** Bloques **********************/
+bloque ::= BLOQUE_A instrucciones BLOQUE_C;
+
+instrucciones ::= sentencia
+                | instrucciones sentencia;
+
+sentencia ::= expresion
+            | llamado_funcion
+            | creacion
+            | asign
+            | asign_operador
+            | condicional_else
+            | iteracion
+            | switch
+            | salida
+            | entrada
+            | retorno
+            | error:e DELIMITADOR {: errorEncontrado(); :}
+            | error:e BLOQUE_C {: errorEncontrado(); :};
+
+/********************** Expresiones **********************/
+expresion ::= expresion_aux DELIMITADOR;
+
+expresion_aux ::= expresion_arit
+            | expresion_booleana;
+
+expresion_arit ::= expresion_arit operadores_arit factor
+                | factor;
+
+expresion_booleana ::= expresion_rel_num
+                    | expresion_rel_logico
+                    | expresion_logica;
+
+factor ::= IDENTIFICADOR
+        | literales
+        | expresion_unaria_numero
+        | PARENTESIS_A expresion_aux PARENTESIS_C;
+
+expresion_rel_num ::= expresion_arit operadores_rel_num expresion_arit;
+
+expresion_rel_logico ::= expresion_booleana IGUALDAD expresion_booleana
+                        | expresion_booleana DIFERENTE expresion_booleana;
+
+expresion_logica ::= expresion_logica operadores_log expresion_booleana
+                    | NEGACION expresion_booleana;
+
+expresion_unaria_numero ::= IDENTIFICADOR simbolos_unarios_numero
+                        | LIT_INTEGER simbolos_unarios_numero
+                        | LIT_FLOAT simbolos_unarios_numero;
+
+
+/********************** Creaciones **********************/
+creacion ::= creacion_unica
+            | creacion_asign;
+
+creacion_unica ::= tipos IDENTIFICADOR DELIMITADOR
+                | tipos IDENTIFICADOR CORCHETE_A LIT_INTEGER CORCHETE_C DELIMITADOR;
+
+creacion_asign ::= tipos IDENTIFICADOR ASIGNACION literales DELIMITADOR
+                | tipos IDENTIFICADOR ASIGNACION IDENTIFICADOR DELIMITADOR
+                | tipos IDENTIFICADOR ASIGNACION expresion_aux DELIMITADOR
+                | tipos IDENTIFICADOR ASIGNACION entrada DELIMITADOR
+                | tipos IDENTIFICADOR ASIGNACION llamado_funcion DELIMITADOR
+                | tipos IDENTIFICADOR CORCHETE_A LIT_INTEGER CORCHETE_C ASIGNACION CORCHETE_A asign_arreglos_aux CORCHETE_C DELIMITADOR;
+
+/********************** Asignaciones **********************/
+asign ::= IDENTIFICADOR ASIGNACION literales DELIMITADOR
+        | IDENTIFICADOR ASIGNACION IDENTIFICADOR DELIMITADOR
+        | IDENTIFICADOR ASIGNACION expresion_aux DELIMITADOR
+        | IDENTIFICADOR ASIGNACION entrada DELIMITADOR
+        | IDENTIFICADOR ASIGNACION llamado_funcion DELIMITADOR
+        | IDENTIFICADOR CORCHETE_A LIT_INTEGER CORCHETE_C ASIGNACION CORCHETE_A asign_arreglos_aux CORCHETE_C DELIMITADOR;
+
+asign_operador ::= IDENTIFICADOR operadores_arit ASIGNACION literales DELIMITADOR
+                | IDENTIFICADOR operadores_arit ASIGNACION IDENTIFICADOR DELIMITADOR
+                | IDENTIFICADOR operadores_arit ASIGNACION expresion_aux DELIMITADOR
+                | IDENTIFICADOR operadores_arit ASIGNACION entrada DELIMITADOR
+                | IDENTIFICADOR operadores_arit ASIGNACION llamado_funcion DELIMITADOR;
+
+asign_arreglos_aux ::= literales
+                    | asign_arreglos_aux COMA literales
+                    | asign_arreglos_aux COMA IDENTIFICADOR;
+
+/********************** Condicionales **********************/
+condicional_else ::= condicional_aux
+                    | condicional_aux ELSE bloque;
+
+condicional_aux ::= condicional
+                    | condicional_aux condicional;
+
+condicional ::= IF PARENTESIS_A expresion_booleana PARENTESIS_C bloque;
+
+/********************** Iteraciones **********************/
+iteracion ::= iteracion_while
+            | iteracion_for;
+
+iteracion_while ::= WHILE PARENTESIS_A expresion_booleana PARENTESIS_C bloque;
+
+iteracion_for ::= FOR PARENTESIS_A creacion_asign expresion_rel_num DELIMITADOR asign_operador PARENTESIS_C bloque;
+
+/********************** Switch **********************/
+switch ::= SWITCH PARENTESIS_A IDENTIFICADOR PARENTESIS_C BLOQUE_A casos_con_default BLOQUE_C DELIMITADOR;
+
+casos_con_default ::= casos_aux DEFAULT DOS_PUNTOS bloque;
+
+casos_aux ::= caso
+        | casos_aux caso;
+
+caso ::= CASE literales DOS_PUNTOS bloque break;
+
+/********************** Entrada y salida **********************/
+salida ::= PRINT PARENTESIS_A expresion_aux PARENTESIS_C DELIMITADOR
+        | PRINT PARENTESIS_A literales PARENTESIS_C DELIMITADOR;
+
+entrada ::= READ PARENTESIS_A PARENTESIS_C;
+
+/********************** Break **********************/
+break ::= BREAK DELIMITADOR;
+
+/********************** Retorno **********************/
+retorno ::= RETURN expresion_aux DELIMITADOR
+        | RETURN literales DELIMITADOR;
+        
+/********************** Generales **********************/
 tipos ::= INTEGER:i {: RESULT = i.toString(); :}
         | FLOAT:i {: RESULT = i.toString(); :}
         | CHAR:i {: RESULT = i.toString(); :}
         | STRING:i {: RESULT = i.toString(); :}
         | BOOL:i {: RESULT = i.toString(); :};
-//tipos_arreglos ::= INTEGER | CHAR;
+
 literales ::= LIT_INTEGER:i {: RESULT = i.toString(); :}
             | LIT_FLOAT:i {: RESULT = i.toString(); :}
             | LIT_CHAR:i {: RESULT = i.toString(); :}
@@ -115,128 +282,18 @@ operadores_arit ::= SUMA:i {: RESULT = i.toString(); :}
                 | DIVISION:i {: RESULT = i.toString(); :}
                 | MODULO:i {: RESULT = i.toString(); :}
                 | POTENCIA:i {: RESULT = i.toString(); :};
+
 operadores_rel_num ::= MENOR:i {: RESULT = i.toString(); :}
                     | MENOR_IGUAL:i {: RESULT = i.toString(); :}
                     | MAYOR:i {: RESULT = i.toString(); :}
                     | MAYOR_IGUAL:i {: RESULT = i.toString(); :}
                     | IGUALDAD:i {: RESULT = i.toString(); :}
                     | DIFERENTE:i {: RESULT = i.toString(); :};
+
 operadores_log ::= CONJUNCION:i {: RESULT = i.toString(); :}
                 | DISYUNCION:i {: RESULT = i.toString(); :}
                 | NEGACION:i {: RESULT = i.toString(); :};
 
-// Main
-programa ::= main {: if (contadorErrores == 0){
-                       System.out.println("Código semánticamente bien estructurado");
-                     }
-                     else{
-                       throw new Error("Cantidad de errores semánticos encontrados: " + contadorErrores);
-                     }
-                   :};
-main ::= MAIN DOS_PUNTOS funciones;
-
-// Funciones
-funciones ::= funcion
-            | funciones funcion;
-funcion ::= encabezado_func bloque;
-encabezado_func ::= tipos IDENTIFICADOR parametros;
-
-// Parametros
-parametros ::= PARENTESIS_A PARENTESIS_C | PARENTESIS_A paramAux PARENTESIS_C;
-paramAux ::= parametro | paramAux COMA parametro;
-parametro ::= tipos IDENTIFICADOR;
-
-// Bloques
-bloque ::= BLOQUE_A instrucciones BLOQUE_C DELIMITADOR;
-instrucciones ::= sentencia | instrucciones sentencia;
-sentencia ::= expresion
-            | creacion
-            | asign
-            | condicional_else
-            | iteracion
-            | switch
-            | salida
-            | entrada
-            | retorno
-            | error:e DELIMITADOR {:
-                                    contadorErrores += 1;
-                                    System.out.println("Sentencia mal estructurada");
-                                    System.out.println("Revise la semántica");
-                                  :};
-
-
-// Creaciones
-creacion ::= creacion_unica
-            | creacion_asign;
-creacion_unica ::= tipos IDENTIFICADOR DELIMITADOR;
-            //| tipos_arreglos IDENTIFICADOR CORCHETE_A INTEGER CORCHETE_C DELIMITADOR;
-creacion_asign ::= tipos IDENTIFICADOR ASIGNACION literales DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION IDENTIFICADOR DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION expresion_aux DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION entrada DELIMITADOR;
-                //| tipos_arreglos IDENTIFICADOR CORCHETE_A INTEGER CORCHETE_C ASIGNACION CORCHETE_A (asignArreglosAux){INTEGER} CORCHETE_C DELIMITADOR;
-
-// Asignaciones
-asign ::= IDENTIFICADOR ASIGNACION literales DELIMITADOR
-                | IDENTIFICADOR ASIGNACION IDENTIFICADOR DELIMITADOR
-                | IDENTIFICADOR ASIGNACION expresion_aux DELIMITADOR
-                | IDENTIFICADOR ASIGNACION entrada DELIMITADOR;
-/*
-asignArreglosAux ::= asignArreglos | asignArreglosAux COMA asignArreglos;
-asignArreglos ::= INTEGER | IDENTIFICADOR | CHAR;
-*/
-
-// Condicionales
-condicional_else ::= condicional_aux
-                    | condicional_aux ELSE bloque;
-condicional_aux ::= condicional
-                    | condicional_aux condicional;
-condicional ::= IF PARENTESIS_A expresion_booleana PARENTESIS_C bloque;
-
-// Iteraciones
-iteracion ::= iteracion_while
-            | iteracion_for;
-iteracion_while ::= WHILE PARENTESIS_A expresion_booleana PARENTESIS_C bloque;
-iteracion_for ::= FOR PARENTESIS_A creacion_asign PUNTO_COMA expresion_aux PUNTO_COMA creacion_asign PARENTESIS_C bloque;
-
-// Switch
-switch ::= SWITCH PARENTESIS_A IDENTIFICADOR PARENTESIS_C BLOQUE_A casos_con_default BLOQUE_C;
-casos_con_default ::= casos DEFAULT DOS_PUNTOS bloque;
-casos ::= caso
-        | casos caso;
-caso ::= CASE literales DOS_PUNTOS bloque break;
-
-// Entrada y salida
-salida ::= PRINT PARENTESIS_A expresion_aux PARENTESIS_C DELIMITADOR
-        | PRINT PARENTESIS_A literales PARENTESIS_C DELIMITADOR;
-entrada ::= READ PARENTESIS_A PARENTESIS_C DELIMITADOR;
-
-// Break
-break ::= BREAK DELIMITADOR;
-
-// Retorno
-retorno ::= RETURN DELIMITADOR
-            | RETURN expresion_aux DELIMITADOR;
-
-// Expresiones
-expresion_booleana ::= expresion_rel DELIMITADOR
-                    | expresion_logica DELIMITADOR;
-expresion ::= expresion_aux DELIMITADOR;
-expresion_aux ::= expresion_arit
-            | expresion_rel
-            | expresion_logica
-            | expresion_unaria_cadena;
-expresion_unaria_cadena ::= IDENTIFICADOR SUMA RESTA;
-expresion_unaria_entero ::= IDENTIFICADOR INCREMENTO
-                        | IDENTIFICADOR DECREMENTO
-                        | INTEGER INCREMENTO
-                        | INTEGER DECREMENTO;
-expresion_arit ::= expresion_arit operadores_arit factor
-                | factor;
-factor ::= IDENTIFICADOR
-        | literales
-        | expresion_unaria_entero
-        | PARENTESIS_A expresion_aux PARENTESIS_C;
-expresion_rel ::= expresion_aux operadores_rel_num expresion_aux;
-expresion_logica ::= expresion_logica operadores_log expresion_aux
-                | NEGACION expresion_aux;
+simbolos_unarios_numero ::= INCREMENTO:i {: RESULT = i.toString(); :}
+                        | DECREMENTO:i {: RESULT = i.toString(); :}
+                        | NEGATIVO:i {: RESULT = i.toString(); :};

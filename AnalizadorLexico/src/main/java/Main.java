@@ -33,6 +33,7 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         // Path del resultado
         String rutaArchivoResultados = currentDirectory + "\\resultados";
         FileManager.writeFile(rutaArchivoResultados, "resultado.txt", tabla.toString());

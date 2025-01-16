@@ -54,8 +54,8 @@ espacio = \r | \n | \r\n | [ \t\f]
 <YYINITIAL> "cometa" { tokensTable.addToken(new Token("STRING", yytext(), yyline, yycolumn)); return symbol(sym.STRING); }
 
 /* Objetos */
--?{digito}+ { tokensTable.addToken(new Token("LIT_INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.LIT_INTEGER); }
--?{digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.LIT_FLOAT); }
+{digito}+ { tokensTable.addToken(new Token("LIT_INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.LIT_INTEGER); }
+{digito}+.{digito}+ { tokensTable.addToken(new Token("LIT_FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.LIT_FLOAT); }
 
 \'.?\' { tokensTable.addToken(new Token("LIT_CHAR", yytext(), yyline, yycolumn)); return symbol(sym.LIT_CHAR); }
 \".*\" { tokensTable.addToken(new Token("LIT_STRING", yytext(), yyline, yycolumn)); return symbol(sym.LIT_STRING); }
@@ -101,6 +101,7 @@ espacio = \r | \n | \r\n | [ \t\f]
 /* Símbolos de estructura */
 <YYINITIAL> "," { tokensTable.addToken(new Token("COMA", yytext(), yyline, yycolumn)); return symbol(sym.COMA); }
 <YYINITIAL> ";" { tokensTable.addToken(new Token("PUNTO_COMA", yytext(), yyline, yycolumn)); return symbol(sym.PUNTO_COMA); }
+<YYINITIAL> "-" { tokensTable.addToken(new Token("NEGATIVO", yytext(), yyline, yycolumn)); return symbol(sym.NEGATIVO); }
 
 <YYINITIAL> "abrecuento" { tokensTable.addToken(new Token("BLOQUE_A", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_A); }
 <YYINITIAL> "cierracuento" { tokensTable.addToken(new Token("BLOQUE_C", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_C); }
