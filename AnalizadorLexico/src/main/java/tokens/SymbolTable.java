@@ -32,7 +32,9 @@ public class SymbolTable {
         if (!table.containsKey(name)) {
             table.put(name, new SymbolInfo(type, line, column, value));
         } else {
-            System.out.println("Warning: El símbolo '" + name + "' ya existe en la tabla.");
+            if (table.get(name).value!=null) {
+                table.get(name).value = value;
+            }
         }
     }
 
