@@ -8,6 +8,7 @@ import java.io.StringReader;
 
 import java_cup.runtime.Symbol;
 import tokens.TokenTable;
+import tokens.SymbolTable;
 
 public class Main {
     public static void main(String[] args) {
@@ -46,6 +47,11 @@ public class Main {
         catch (Exception e){
             System.out.println(e.getMessage());
         }
+
+
+        SymbolTable tablaSim = lexer.getSymbolTable();
+        tablaSim.display();
+        FileManager.writeFile(rutaArchivoResultados, "tablaSimbolos.txt", tablaSim.toString());
 
     }
 }
