@@ -1,38 +1,37 @@
 package tokens;
-
 import java.util.HashMap;
+public class TablaSimbolos {
 
-public class SymbolTable {
     private static class SymbolInfo {
         String type;
-        int line;
-        int column;
+        String scope;
         Object value;
 
-        public SymbolInfo(String type, int line, int column, Object value) {
+        public SymbolInfo(String type, String scope, Object value) {
             this.type = type;
-            this.line = line;
-            this.column = column;
+            this.scope = scope;
             this.value = value;
         }
 
         @Override
         public String toString() {
-            return String.format("%-15s %-10d %-10d %-10s", type, line, column, value != null ? value : "null");
+            return String.format("%-15s %-10s %-10s", type, scope, value != null ? value : "null");
         }
     }
-
     private final HashMap<String, SymbolInfo> table;
 
-    public SymbolTable() {
+    public TablaSimbolos() {
         this.table = new HashMap<>();
     }
 
-    public void addSymbol(String name, String type, int line, int column, Object value) {
-        if (!table.containsKey(name)) {
-            table.put(name, new SymbolInfo(type, line, column, value));
+    public void addSymbol(String name, String type, String scope, Object value) {
+        if (table.containsKey(name)) {
+            if (table.get(name).value != null) {
+                table.get(name).value = value;
+            }
+            System.out.println("Error: Symbol " + name + " already exists in scope " + scope);
         } else {
-            System.out.println("Warning: El símbolo '" + name + "' ya existe en la tabla.");
+            table.put(name, new SymbolInfo(type, scope, value));
         }
     }
 
@@ -50,8 +49,8 @@ public class SymbolTable {
 
     public void display() {
         System.out.println("Tabla de Símbolos:");
-        System.out.printf("%-15s %-10s %-10s %-10s %-10s\n", "Nombre", "Tipo", "Línea", "Columna", "Valor");
-        System.out.println("----------------------------------------------------------");
+        System.out.printf("%-15s %-10s %-10s %-10s\n", "Nombre", "Tipo", "Alcance", "Valor");
+        System.out.println("----------------------------------------------------");
         for (var entry : table.entrySet()) {
             System.out.printf("%-15s %s\n", entry.getKey(), entry.getValue());
         }

@@ -5,13 +5,11 @@
 package jflex;
 
 import java_cup.runtime.*;
-import java.lang.String;
-
 import cup.sym;
-
 import tokens.Token;
 import tokens.TokenTable;
 import tokens.SymbolTable;
+
 @SuppressWarnings("fallthrough")
 public class LexerCup implements java_cup.runtime.Scanner {
 
@@ -881,47 +879,47 @@ public class LexerCup implements java_cup.runtime.Scanner {
           // fall through
           case 57: break;
           case 3:
-            { tokensTable.addToken(new Token("COMA", yytext(), yyline, yycolumn)); return symbol(sym.COMA);
+            { symbolTable.addSymbol(yytext(), "COMA", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("COMA", yytext(), yyline, yycolumn)); return symbol(sym.COMA);
             }
           // fall through
           case 58: break;
           case 4:
-            { tokensTable.addToken(new Token("NEGATIVO", yytext(), yyline, yycolumn)); return symbol(sym.NEGATIVO);
+            { symbolTable.addSymbol(yytext(), "NEGATIVO", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("NEGATIVO", yytext(), yyline, yycolumn)); return symbol(sym.NEGATIVO);
             }
           // fall through
           case 59: break;
           case 5:
-            { tokensTable.addToken(new Token("LIT_INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.LIT_INTEGER);
+            { symbolTable.addSymbol(yytext(), "LIT_INTEGER", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("LIT_INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.LIT_INTEGER);
             }
           // fall through
           case 60: break;
           case 6:
-            { tokensTable.addToken(new Token("PUNTO_COMA", yytext(), yyline, yycolumn)); return symbol(sym.PUNTO_COMA);
+            { symbolTable.addSymbol(yytext(), "PUNTO_COMA", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("PUNTO_COMA", yytext(), yyline, yycolumn)); return symbol(sym.PUNTO_COMA);
             }
           // fall through
           case 61: break;
           case 7:
-            { tokensTable.addToken(new Token("LIT_STRING", yytext(), yyline, yycolumn)); return symbol(sym.LIT_STRING);
+            { symbolTable.addSymbol(yytext(), "LIT_STRING", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("LIT_STRING", yytext(), yyline, yycolumn)); return symbol(sym.LIT_STRING);
             }
           // fall through
           case 62: break;
           case 8:
-            { tokensTable.addToken(new Token("LIT_CHAR", yytext(), yyline, yycolumn)); return symbol(sym.LIT_CHAR);
+            { symbolTable.addSymbol(yytext(), "LIT_CHAR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("LIT_CHAR", yytext(), yyline, yycolumn)); return symbol(sym.LIT_CHAR);
             }
           // fall through
           case 63: break;
           case 9:
-            { tokensTable.addToken(new Token("LIT_FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.LIT_FLOAT);
+            { symbolTable.addSymbol(yytext(), "LIT_FLOAT", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("LIT_FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.LIT_FLOAT);
             }
           // fall through
           case 64: break;
           case 10:
-            { symbolTable.addSymbol(yytext(), "IDENTIFICADOR", yyline + 1, yycolumn + 1, null);tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR);
+            { symbolTable.addSymbol(yytext(), "IDENTIFICADOR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("IDENTIFICADOR", yytext(), yyline, yycolumn)); return symbol(sym.IDENTIFICADOR);
             }
           // fall through
           case 65: break;
           case 11:
-            { tokensTable.addToken(new Token("LIT_BOOL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_BOOL);
+            { symbolTable.addSymbol(yytext(), "LIT_BOOL", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("LIT_BOOL", yytext(), yyline, yycolumn)); return symbol(sym.LIT_BOOL);
             }
           // fall through
           case 66: break;
@@ -931,217 +929,217 @@ public class LexerCup implements java_cup.runtime.Scanner {
           // fall through
           case 67: break;
           case 13:
-            { tokensTable.addToken(new Token("IF", yytext(), yyline, yycolumn)); return symbol(sym.IF);
+            { symbolTable.addSymbol(yytext(), "IF", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("IF", yytext(), yyline, yycolumn)); return symbol(sym.IF);
             }
           // fall through
           case 68: break;
           case 14:
-            { tokensTable.addToken(new Token("ELSE", yytext(), yyline, yycolumn)); return symbol(sym.ELSE);
+            { symbolTable.addSymbol(yytext(), "ELSE", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("ELSE", yytext(), yyline, yycolumn)); return symbol(sym.ELSE);
             }
           // fall through
           case 69: break;
           case 15:
-            { tokensTable.addToken(new Token("IGUALDAD", yytext(), yyline, yycolumn)); return symbol(sym.IGUALDAD);
+            { symbolTable.addSymbol(yytext(), "IGUALDAD", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("IGUALDAD", yytext(), yyline, yycolumn)); return symbol(sym.IGUALDAD);
             }
           // fall through
           case 70: break;
           case 16:
-            { tokensTable.addToken(new Token("BREAK", yytext(), yyline, yycolumn)); return symbol(sym.BREAK);
+            { symbolTable.addSymbol(yytext(), "BREAK", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("BREAK", yytext(), yyline, yycolumn)); return symbol(sym.BREAK);
             }
           // fall through
           case 71: break;
           case 17:
-            { tokensTable.addToken(new Token("RETURN", yytext(), yyline, yycolumn)); return symbol(sym.RETURN);
+            { symbolTable.addSymbol(yytext(), "RETURN", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("RETURN", yytext(), yyline, yycolumn)); return symbol(sym.RETURN);
             }
           // fall through
           case 72: break;
           case 18:
-            { tokensTable.addToken(new Token("MODULO", yytext(), yyline, yycolumn)); return symbol(sym.MODULO);
+            { symbolTable.addSymbol(yytext(), "MODULO", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MODULO", yytext(), yyline, yycolumn)); return symbol(sym.MODULO);
             }
           // fall through
           case 73: break;
           case 19:
-            { tokensTable.addToken(new Token("PRINT", yytext(), yyline, yycolumn)); return symbol(sym.PRINT);
+            { symbolTable.addSymbol(yytext(), "PRINT", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("PRINT", yytext(), yyline, yycolumn)); return symbol(sym.PRINT);
             }
           // fall through
           case 74: break;
           case 20:
-            { tokensTable.addToken(new Token("INCREMENTO", yytext(), yyline, yycolumn)); return symbol(sym.INCREMENTO);
+            { symbolTable.addSymbol(yytext(), "INCREMENTO", yyline + 1, yycolumn + 1, null);tokensTable.addToken(new Token("INCREMENTO", yytext(), yyline, yycolumn)); return symbol(sym.INCREMENTO);
             }
           // fall through
           case 75: break;
           case 21:
-            { tokensTable.addToken(new Token("DIVISION", yytext(), yyline, yycolumn)); return symbol(sym.DIVISION);
+            { symbolTable.addSymbol(yytext(), "DIVISION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DIVISION", yytext(), yyline, yycolumn)); return symbol(sym.DIVISION);
             }
           // fall through
           case 76: break;
           case 22:
-            { tokensTable.addToken(new Token("DOS_PUNTOS", yytext(), yyline, yycolumn)); return symbol(sym.DOS_PUNTOS);
+            { symbolTable.addSymbol(yytext(), "DOS_PUNTOS", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DOS_PUNTOS", yytext(), yyline, yycolumn)); return symbol(sym.DOS_PUNTOS);
             }
           // fall through
           case 77: break;
           case 23:
-            { tokensTable.addToken(new Token("STRING", yytext(), yyline, yycolumn)); return symbol(sym.STRING);
+            { symbolTable.addSymbol(yytext(), "STRING", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("STRING", yytext(), yyline, yycolumn)); return symbol(sym.STRING);
             }
           // fall through
           case 78: break;
           case 24:
-            { tokensTable.addToken(new Token("CHAR", yytext(), yyline, yycolumn)); return symbol(sym.CHAR);
+            { symbolTable.addSymbol(yytext(), "CHAR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("CHAR", yytext(), yyline, yycolumn)); return symbol(sym.CHAR);
             }
           // fall through
           case 79: break;
           case 25:
-            { tokensTable.addToken(new Token("FOR", yytext(), yyline, yycolumn)); return symbol(sym.FOR);
+            { symbolTable.addSymbol(yytext(), "FOR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("FOR", yytext(), yyline, yycolumn)); return symbol(sym.FOR);
             }
           // fall through
           case 80: break;
           case 26:
-            { tokensTable.addToken(new Token("DISYUNCION", yytext(), yyline, yycolumn)); return symbol(sym.DISYUNCION);
+            { symbolTable.addSymbol(yytext(), "DISYUNCION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DISYUNCION", yytext(), yyline, yycolumn)); return symbol(sym.DISYUNCION);
             }
           // fall through
           case 81: break;
           case 27:
-            { tokensTable.addToken(new Token("DECREMENTO", yytext(), yyline, yycolumn)); return symbol(sym.DECREMENTO);
+            { symbolTable.addSymbol(yytext(), "DECREMENTO", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DECREMENTO", yytext(), yyline, yycolumn)); return symbol(sym.DECREMENTO);
             }
           // fall through
           case 82: break;
           case 28:
-            { tokensTable.addToken(new Token("BOOL", yytext(), yyline, yycolumn)); return symbol(sym.BOOL);
+            { symbolTable.addSymbol(yytext(), "BOOL", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("BOOL", yytext(), yyline, yycolumn)); return symbol(sym.BOOL);
             }
           // fall through
           case 83: break;
           case 29:
-            { tokensTable.addToken(new Token("DEFAULT", yytext(), yyline, yycolumn)); return symbol(sym.DEFAULT);
+            { symbolTable.addSymbol(yytext(), "DEFAULT", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DEFAULT", yytext(), yyline, yycolumn)); return symbol(sym.DEFAULT);
             }
           // fall through
           case 84: break;
           case 30:
-            { tokensTable.addToken(new Token("SWITCH", yytext(), yyline, yycolumn)); return symbol(sym.SWITCH);
+            { symbolTable.addSymbol(yytext(), "SWITCH", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("SWITCH", yytext(), yyline, yycolumn)); return symbol(sym.SWITCH);
             }
           // fall through
           case 85: break;
           case 31:
-            { tokensTable.addToken(new Token("ASIGNACION", yytext(), yyline, yycolumn)); return symbol(sym.ASIGNACION);
+            { symbolTable.addSymbol(yytext(), "ASIGNACION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("ASIGNACION", yytext(), yyline, yycolumn)); return symbol(sym.ASIGNACION);
             }
           // fall through
           case 86: break;
           case 32:
-            { tokensTable.addToken(new Token("READ", yytext(), yyline, yycolumn)); return symbol(sym.READ);
+            { symbolTable.addSymbol(yytext(), "READ", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("READ", yytext(), yyline, yycolumn)); return symbol(sym.READ);
             }
           // fall through
           case 87: break;
           case 33:
-            { tokensTable.addToken(new Token("CONJUNCION", yytext(), yyline, yycolumn)); return symbol(sym.CONJUNCION);
+            { symbolTable.addSymbol(yytext(), "CONJUNCION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("CONJUNCION", yytext(), yyline, yycolumn)); return symbol(sym.CONJUNCION);
             }
           // fall through
           case 88: break;
           case 34:
-            { tokensTable.addToken(new Token("MAYOR", yytext(), yyline, yycolumn)); return symbol(sym.MAYOR);
+            { symbolTable.addSymbol(yytext(), "MAYOR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MAYOR", yytext(), yyline, yycolumn)); return symbol(sym.MAYOR);
             }
           // fall through
           case 89: break;
           case 35:
-            { tokensTable.addToken(new Token("SUMA", yytext(), yyline, yycolumn)); return symbol(sym.SUMA);
+            { symbolTable.addSymbol(yytext(), "SUMA", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("SUMA", yytext(), yyline, yycolumn)); return symbol(sym.SUMA);
             }
           // fall through
           case 90: break;
           case 36:
-            { tokensTable.addToken(new Token("INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.INTEGER);
+            { symbolTable.addSymbol(yytext(), "INTEGER", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("INTEGER", yytext(), yyline, yycolumn)); return symbol(sym.INTEGER);
             }
           // fall through
           case 91: break;
           case 37:
-            { tokensTable.addToken(new Token("MAYOR_IGUAL", yytext(), yyline, yycolumn)); return symbol(sym.MAYOR_IGUAL);
+            { symbolTable.addSymbol(yytext(), "MAYOR_IGUAL", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MAYOR_IGUAL", yytext(), yyline, yycolumn)); return symbol(sym.MAYOR_IGUAL);
             }
           // fall through
           case 92: break;
           case 38:
-            { tokensTable.addToken(new Token("MAIN", yytext(), yyline, yycolumn)); return symbol(sym.MAIN);
+            { symbolTable.addSymbol(yytext(), "MAIN", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MAIN", yytext(), yyline, yycolumn)); return symbol(sym.MAIN);
             }
           // fall through
           case 93: break;
           case 39:
-            { tokensTable.addToken(new Token("POTENCIA", yytext(), yyline, yycolumn)); return symbol(sym.POTENCIA);
+            { symbolTable.addSymbol(yytext(), "POTENCIA", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("POTENCIA", yytext(), yyline, yycolumn)); return symbol(sym.POTENCIA);
             }
           // fall through
           case 94: break;
           case 40:
-            { tokensTable.addToken(new Token("NEGACION", yytext(), yyline, yycolumn)); return symbol(sym.NEGACION);
+            { symbolTable.addSymbol(yytext(), "NEGACION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("NEGACION", yytext(), yyline, yycolumn)); return symbol(sym.NEGACION);
             }
           // fall through
           case 95: break;
           case 41:
-            { tokensTable.addToken(new Token("FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.FLOAT);
+            { symbolTable.addSymbol(yytext(), "FLOAT", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("FLOAT", yytext(), yyline, yycolumn)); return symbol(sym.FLOAT);
             }
           // fall through
           case 96: break;
           case 42:
-            { tokensTable.addToken(new Token("WHILE", yytext(), yyline, yycolumn)); return symbol(sym.WHILE);
+            { symbolTable.addSymbol(yytext(), "WHILE", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("WHILE", yytext(), yyline, yycolumn)); return symbol(sym.WHILE);
             }
           // fall through
           case 97: break;
           case 43:
-            { tokensTable.addToken(new Token("CASE", yytext(), yyline, yycolumn)); return symbol(sym.CASE);
+            { symbolTable.addSymbol(yytext(), "CASE", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("CASE", yytext(), yyline, yycolumn)); return symbol(sym.CASE);
             }
           // fall through
           case 98: break;
           case 44:
-            { tokensTable.addToken(new Token("DIFERENTE", yytext(), yyline, yycolumn)); return symbol(sym.DIFERENTE);
+            { symbolTable.addSymbol(yytext(), "DIFERENTE", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DIFERENTE", yytext(), yyline, yycolumn)); return symbol(sym.DIFERENTE);
             }
           // fall through
           case 99: break;
           case 45:
-            { tokensTable.addToken(new Token("MENOR", yytext(), yyline, yycolumn)); return symbol(sym.MENOR);
+            { symbolTable.addSymbol(yytext(), "MENOR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MENOR", yytext(), yyline, yycolumn)); return symbol(sym.MENOR);
             }
           // fall through
           case 100: break;
           case 46:
-            { tokensTable.addToken(new Token("MENOR_IGUAL", yytext(), yyline, yycolumn)); return symbol(sym.MENOR_IGUAL);
+            { symbolTable.addSymbol(yytext(), "MENOR_IGUAL", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MENOR_IGUAL", yytext(), yyline, yycolumn)); return symbol(sym.MENOR_IGUAL);
             }
           // fall through
           case 101: break;
           case 47:
-            { tokensTable.addToken(new Token("DELIMITADOR", yytext(), yyline, yycolumn)); return symbol(sym.DELIMITADOR);
+            { symbolTable.addSymbol(yytext(), "DELIMITADOR", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("DELIMITADOR", yytext(), yyline, yycolumn)); return symbol(sym.DELIMITADOR);
             }
           // fall through
           case 102: break;
           case 48:
-            { tokensTable.addToken(new Token("BLOQUE_A", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_A);
+            { symbolTable.addSymbol(yytext(), "BLOQUE_A", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("BLOQUE_A", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_A);
             }
           // fall through
           case 103: break;
           case 49:
-            { tokensTable.addToken(new Token("PARENTESIS_A", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_A);
+            { symbolTable.addSymbol(yytext(), "PARENTESIS_A", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("PARENTESIS_A", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_A);
             }
           // fall through
           case 104: break;
           case 50:
-            { tokensTable.addToken(new Token("MULTIPLICACION", yytext(), yyline, yycolumn)); return symbol(sym.MULTIPLICACION);
+            { symbolTable.addSymbol(yytext(), "MULTIPLICACION", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("MULTIPLICACION", yytext(), yyline, yycolumn)); return symbol(sym.MULTIPLICACION);
             }
           // fall through
           case 105: break;
           case 51:
-            { tokensTable.addToken(new Token("CORCHETE_A", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_A);
+            { symbolTable.addSymbol(yytext(), "CORCHETE_A", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("CORCHETE_A", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_A);
             }
           // fall through
           case 106: break;
           case 52:
-            { tokensTable.addToken(new Token("RESTA", yytext(), yyline, yycolumn)); return symbol(sym.RESTA);
+            { symbolTable.addSymbol(yytext(), "RESTA", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("RESTA", yytext(), yyline, yycolumn)); return symbol(sym.RESTA);
             }
           // fall through
           case 107: break;
           case 53:
-            { tokensTable.addToken(new Token("BLOQUE_C", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_C);
+            { symbolTable.addSymbol(yytext(), "BLOQUE_C", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("BLOQUE_C", yytext(), yyline, yycolumn)); return symbol(sym.BLOQUE_C);
             }
           // fall through
           case 108: break;
           case 54:
-            { tokensTable.addToken(new Token("PARENTESIS_C", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_C);
+            { symbolTable.addSymbol(yytext(), "PARENTESIS_C", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("PARENTESIS_C", yytext(), yyline, yycolumn)); return symbol(sym.PARENTESIS_C);
             }
           // fall through
           case 109: break;
           case 55:
-            { tokensTable.addToken(new Token("CORCHETE_C", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_C);
+            { symbolTable.addSymbol(yytext(), "CORCHETE_C", yyline + 1, yycolumn + 1, null); tokensTable.addToken(new Token("CORCHETE_C", yytext(), yyline, yycolumn)); return symbol(sym.CORCHETE_C);
             }
           // fall through
           case 110: break;
