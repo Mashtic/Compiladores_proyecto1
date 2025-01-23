@@ -2,11 +2,14 @@ package cup;
 
 import java_cup.runtime.*;
 import jflex.LexerCup;
+import type_table.TypeTable;
 
 //////////////////////// Código ////////////////////////
 action code
 {:
-    
+    // Tabla de tipos
+    public TypeTable typeTable = new TypeTable();
+
     // Manejo de errores
     public int contadorErrores = 0;
 
@@ -81,7 +84,7 @@ non terminal programa, main; /* Main */
 non terminal funciones, funcion, encabezado_func, llamado_funcion; /* Funciones */
 non terminal parametros, paramAux, parametro; /* Parámetros */
 non terminal bloque, instrucciones, sentencia; /* Bloques */
-non terminal creacion, creacion_unica, creacion_asign; /* Creaciones */
+non terminal creacion, creacion_unica, creacion_asign, creacion_izq; /* Creaciones */
 non terminal asign, asign_arreglos_aux, asign_operador; /* Asignaciones */
 non terminal condicional_else, condicional_aux, condicional; /* Condicionales */
 non terminal iteracion, iteracion_while, iteracion_for; /* Iteraciones */
@@ -92,7 +95,7 @@ non terminal retorno; /* Retorno */
 non terminal expresion, expresion_aux; /* Expresiones */
 non terminal expresion_arit, expresion_unaria_numero, factor; /* Expresiones */
 non terminal expresion_booleana, expresion_rel_num, expresion_rel_logico, expresion_logica; /* Expresiones */
-non terminal tipos, literales, operadores_arit, operadores_rel_num, operadores_log, simbolos_unarios_numero; /* Generales */
+non terminal tipos, literales, operadores_arit, operadores_rel_num, operadores_log, simbolos_unarios_numero, identificadores_funciones; /* Generales */
 
 //////////////////////// Precedencia ////////////////////////
 // Operadores aritméticos
@@ -117,9 +120,10 @@ precedence left DELIMITADOR, PARENTESIS_C, IF, IDENTIFICADOR;
 start with programa;
 
 /********************** Main **********************/
-programa ::= main {: revisionCodigo(); :};
-
-main ::= MAIN DOS_PUNTOS funciones;
+programa ::= funciones {:
+                        revisionCodigo();
+                        System.out.println(typeTable.toString());
+                   :};
 
 /********************** Funciones **********************/
 funciones ::= funcion
@@ -127,7 +131,7 @@ funciones ::= funcion
 
 funcion ::= encabezado_func bloque;
 
-encabezado_func ::= tipos IDENTIFICADOR parametros;
+encabezado_func ::= tipos:t identificadores_funciones:id parametros {: typeTable.addTable(t.toString(), id.toString()); :};
 
 llamado_funcion ::= IDENTIFICADOR parametros DELIMITADOR;
 
@@ -195,15 +199,17 @@ expresion_unaria_numero ::= IDENTIFICADOR simbolos_unarios_numero
 creacion ::= creacion_unica
             | creacion_asign;
 
-creacion_unica ::= tipos IDENTIFICADOR DELIMITADOR
-                | tipos IDENTIFICADOR CORCHETE_A LIT_INTEGER CORCHETE_C DELIMITADOR;
+creacion_unica ::= creacion_izq DELIMITADOR
+                | creacion_izq CORCHETE_A LIT_INTEGER CORCHETE_C DELIMITADOR;
 
-creacion_asign ::= tipos IDENTIFICADOR ASIGNACION literales DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION IDENTIFICADOR DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION expresion_aux DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION entrada DELIMITADOR
-                | tipos IDENTIFICADOR ASIGNACION llamado_funcion DELIMITADOR
-                | tipos IDENTIFICADOR CORCHETE_A LIT_INTEGER CORCHETE_C ASIGNACION CORCHETE_A asign_arreglos_aux CORCHETE_C DELIMITADOR;
+creacion_asign ::= creacion_izq ASIGNACION literales DELIMITADOR
+                | creacion_izq ASIGNACION IDENTIFICADOR DELIMITADOR
+                | creacion_izq ASIGNACION expresion_aux DELIMITADOR
+                | creacion_izq ASIGNACION entrada DELIMITADOR
+                | creacion_izq ASIGNACION llamado_funcion DELIMITADOR
+                | creacion_izq CORCHETE_A LIT_INTEGER CORCHETE_C ASIGNACION CORCHETE_A asign_arreglos_aux CORCHETE_C DELIMITADOR;
+
+creacion_izq ::= tipos:t IDENTIFICADOR:id {: typeTable.addRow(t.toString(), id.toString()); :};
 
 /********************** Asignaciones **********************/
 asign ::= IDENTIFICADOR ASIGNACION literales DELIMITADOR
@@ -291,9 +297,11 @@ operadores_rel_num ::= MENOR:i {: RESULT = i.toString(); :}
                     | DIFERENTE:i {: RESULT = i.toString(); :};
 
 operadores_log ::= CONJUNCION:i {: RESULT = i.toString(); :}
-                | DISYUNCION:i {: RESULT = i.toString(); :}
-                | NEGACION:i {: RESULT = i.toString(); :};
+                | DISYUNCION:i {: RESULT = i.toString(); :};
 
 simbolos_unarios_numero ::= INCREMENTO:i {: RESULT = i.toString(); :}
                         | DECREMENTO:i {: RESULT = i.toString(); :}
                         | NEGATIVO:i {: RESULT = i.toString(); :};
+
+identificadores_funciones ::= IDENTIFICADOR:i {: RESULT = i.toString(); :}
+                             | MAIN:i {: RESULT = i.toString(); :};

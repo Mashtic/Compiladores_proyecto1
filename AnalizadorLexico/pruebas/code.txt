@@ -1,148 +1,144 @@
 # Main
-_verano_ sigue
-    # Expresiones
-
+rodolfo _verano_ abreregalo cierraregalo abrecuento
     # Creaciones
-    rodolfo _pruebaCreaciones_ abreregalo cierraregalo abrecuento
-        # Creaciones
-        rodolfo _perro_ finregalo
-        bromista _perro_ finregalo
-        trueno  _perro_ finregalo
-        cupido _perro_ finregalo
-        cometa _perro_ finregalo
+    rodolfo _perro_ finregalo
+    bromista _perro_ finregalo
+    trueno  _perro_ finregalo
+    cupido _perro_ finregalo
+    cometa _perro_ finregalo
 
-        # Arreglos
-        rodolfo _perro_ abreempaque 5 cierraempaque finregalo
-        cupido _perro_ abreempaque 10 cierraempaque finregalo
+    # Arreglos
+    rodolfo _perro_ abreempaque 5 cierraempaque finregalo
+    cupido _perro_ abreempaque 10 cierraempaque finregalo
+cierracuento
+
+# Creaciones y asignaciones
+bromista _pruebaCreacionesAsignaciones_ abreregalo cierraregalo abrecuento
+    # Creaciones (literales)
+    rodolfo _perro_ entrega 453 finregalo
+    bromista _perro_ entrega 40.53 finregalo
+    trueno  _perro_ entrega true finregalo
+    cupido _perro_ entrega 'A' finregalo
+    cometa _perro_ entrega "hola" finregalo
+
+    # Creaciones (identificador)
+    rodolfo _perro_ entrega _guau_ finregalo
+    bromista _perro_ entrega _guau_finregalo
+    trueno  _perro_ entrega _guau_ finregalo
+    cupido _perro_ entrega _guau_ finregalo
+    cometa _perro_ entrega _guau_ finregalo
+
+    # Creaciones (expresion)
+    rodolfo _perro_ entrega 3 quien navidad 4 grinch nochebuena 93 finregalo
+    bromista _perro_ entrega 4 grinch nochebuena 1.5 finregalo
+    trueno  _perro_ entrega abreregalo 4 cierraregalo mary 3.1 finregalo
+    cupido _perro_ entrega _guau_ finregalo
+    cometa _perro_ entrega true finregalo # No sirve las lógicas
+
+    # Creaciones (entrada)
+    cometa _perro_ entrega escucha abreregalo cierraregalo finregalo
+
+    # Arreglos
+    rodolfo _perro_ abreempaque 3 cierraempaque entrega abreempaque 1, _perro_, 3 cierraempaque finregalo
+    cupido _perro_ abreempaque 5 cierraempaque entrega abreempaque 'a', _perro_, 'c', 'd', 'e' cierraempaque finregalo
+cierracuento
+
+# Asignaciones
+trueno _pruebaAsignaciones_ abreregalo cierraregalo abrecuento
+    # Creaciones (literales)
+    _perro_ entrega 453 - finregalo
+    _perro_ entrega 40.53 - finregalo
+    _perro_ entrega true finregalo
+    _perro_ entrega 'A' finregalo
+    _perro_ entrega "hola" finregalo
+
+    # Creaciones (identificador)
+    _perro_ entrega _guau_ finregalo
+    _perro_ entrega _guau_finregalo
+    _perro_ entrega _guau_ finregalo
+    _perro_ entrega _guau_ finregalo
+    _perro_ entrega _guau_ finregalo
+
+    # Creaciones (expresion)
+    _perro_ entrega 3 quien navidad 4 grinch nochebuena 93 finregalo
+    _perro_ entrega 4 grinch nochebuena 1.5 finregalo
+    _perro_ entrega abreregalo 4 cierraregalo mary 3.1 finregalo
+    _perro_ entrega _guau_ finregalo
+    _perro_ entrega true finregalo # No sirve las lógicas
+
+    # Creaciones (entrada)
+    _perro_ entrega escucha abreregalo cierraregalo finregalo
+
+    # Arreglos
+    _perro_ abreempaque 3 cierraempaque entrega abreempaque 1, _perro_, 3 cierraempaque finregalo
+    _perro_ abreempaque 5 cierraempaque entrega abreempaque 'a', _perro_, 'c', 'd', 'e' cierraempaque finregalo
+cierracuento
+
+# Condicional (solo)
+cupido _pruebaCondicional_ abreregalo cierraregalo abrecuento
+    elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+        4 finregalo
+    cierracuento
+cierracuento
+
+# Condicional y else
+cupido _pruebaCondicionalElse_ abreregalo cierraregalo abrecuento
+    elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+        4 finregalo
+    cierracuento
+    hada abrecuento
+        4 finregalo
+    cierracuento
+cierracuento
+
+# Condicionales y else
+cupido _pruebaCondicionalesElse_ abreregalo cierraregalo abrecuento
+    elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+        4 finregalo
+    cierracuento
+    elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+        2 navidad 3 finregalo
+    cierracuento
+    hada abrecuento
+        4 finregalo
+    cierracuento
+cierracuento
+
+# Iteracion
+cupido _pruebaCondicionalesElse_ abreregalo cierraregalo abrecuento
+    # WHILE
+    envuelve abreregalo 1 mary 3 cierraregalo abrecuento
+        4 finregalo
     cierracuento
 
-    # Creaciones y asignaciones
-    bromista _pruebaCreacionesAsignaciones_ abreregalo cierraregalo abrecuento
-        # Creaciones (literales)
-        rodolfo _perro_ entrega 453 finregalo
-        bromista _perro_ entrega 40.53 finregalo
-        trueno  _perro_ entrega true finregalo
-        cupido _perro_ entrega 'A' finregalo
-        cometa _perro_ entrega "hola" finregalo
-
-        # Creaciones (identificador)
-        rodolfo _perro_ entrega _guau_ finregalo
-        bromista _perro_ entrega _guau_finregalo
-        trueno  _perro_ entrega _guau_ finregalo
-        cupido _perro_ entrega _guau_ finregalo
-        cometa _perro_ entrega _guau_ finregalo
-
-        # Creaciones (expresion)
-        rodolfo _perro_ entrega 3 quien navidad 4 grinch nochebuena 93 finregalo
-        bromista _perro_ entrega 4 grinch nochebuena 1.5 finregalo
-        trueno  _perro_ entrega abreregalo 4 cierraregalo mary 3.1 finregalo
-        cupido _perro_ entrega _guau_ finregalo
-        cometa _perro_ entrega true finregalo # No sirve las lógicas
-
-        # Creaciones (entrada)
-        cometa _perro_ entrega escucha abreregalo cierraregalo finregalo
-
-        # Arreglos
-        rodolfo _perro_ abreempaque 3 cierraempaque entrega abreempaque 1, _perro_, 3 cierraempaque finregalo
-        cupido _perro_ abreempaque 5 cierraempaque entrega abreempaque 'a', _perro_, 'c', 'd', 'e' cierraempaque finregalo
+    # FOR
+    duende abreregalo rodolfo _i_ entrega 1 finregalo 4 snowball 4 finregalo _i_ navidad entrega 1 finregalo cierraregalo abrecuento
+        4 finregalo
     cierracuento
+cierracuento
 
-    # Asignaciones
-    trueno _pruebaAsignaciones_ abreregalo cierraregalo abrecuento
-        # Creaciones (literales)
-        _perro_ entrega 453 - finregalo
-        _perro_ entrega 40.53 - finregalo
-        _perro_ entrega true finregalo
-        _perro_ entrega 'A' finregalo
-        _perro_ entrega "hola" finregalo
-
-        # Creaciones (identificador)
-        _perro_ entrega _guau_ finregalo
-        _perro_ entrega _guau_finregalo
-        _perro_ entrega _guau_ finregalo
-        _perro_ entrega _guau_ finregalo
-        _perro_ entrega _guau_ finregalo
-
-        # Creaciones (expresion)
-        _perro_ entrega 3 quien navidad 4 grinch nochebuena 93 finregalo
-        _perro_ entrega 4 grinch nochebuena 1.5 finregalo
-        _perro_ entrega abreregalo 4 cierraregalo mary 3.1 finregalo
-        _perro_ entrega _guau_ finregalo
-        _perro_ entrega true finregalo # No sirve las lógicas
-
-        # Creaciones (entrada)
-        _perro_ entrega escucha abreregalo cierraregalo finregalo
-
-        # Arreglos
-        _perro_ abreempaque 3 cierraempaque entrega abreempaque 1, _perro_, 3 cierraempaque finregalo
-        _perro_ abreempaque 5 cierraempaque entrega abreempaque 'a', _perro_, 'c', 'd', 'e' cierraempaque finregalo
-    cierracuento
-
-    # Condicional (solo)
-    cupido _pruebaCondicional_ abreregalo cierraregalo abrecuento
-        elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+# Switch
+cometa _prueba_ abreregalo cierraregalo abrecuento
+    # Entrada
+    varios abreregalo _i_ cierraregalo abrecuento
+        historia 3 sigue abrecuento
             4 finregalo
-        cierracuento
-    cierracuento
-
-    # Condicional y else
-    cupido _pruebaCondicionalElse_ abreregalo cierraregalo abrecuento
-        elfo abreregalo 2 snowball 3 cierraregalo abrecuento
+            cierracuento
+            corta finregalo
+        ultimo sigue abrecuento
             4 finregalo
-        cierracuento
-        hada abrecuento
-            4 finregalo
-        cierracuento
-    cierracuento
+            cierracuento
+    cierracuento finregalo
+cierracuento
 
-    # Condicionales y else
-    cupido _pruebaCondicionalesElse_ abreregalo cierraregalo abrecuento
-        elfo abreregalo 2 snowball 3 cierraregalo abrecuento
-            4 finregalo
-        cierracuento
-        elfo abreregalo 2 snowball 3 cierraregalo abrecuento
-            2 navidad 3 finregalo
-        cierracuento
-        hada abrecuento
-            4 finregalo
-        cierracuento
-    cierracuento
+# Entrada, salida y retorno
+cometa _prueba_ abreregalo cierraregalo abrecuento
+    # Entrada
+    escucha abreregalo cierraregalo
 
-    # Iteracion
-    cupido _pruebaCondicionalesElse_ abreregalo cierraregalo abrecuento
-        # WHILE
-        envuelve abreregalo 1 mary 3 cierraregalo abrecuento
-            4 finregalo
-        cierracuento
+    # Salida
+    narra abreregalo "hola" cierraregalo finregalo
 
-        # FOR
-        duende abreregalo rodolfo _i_ entrega 1 finregalo 4 snowball 4 finregalo _i_ navidad entrega 1 finregalo cierraregalo abrecuento
-            4 finregalo
-        cierracuento
-    cierracuento
-
-    # Switch
-    cometa _prueba_ abreregalo cierraregalo abrecuento
-        # Entrada
-        varios abreregalo _i_ cierraregalo abrecuento
-            historia 3 sigue abrecuento
-                4 finregalo
-                cierracuento
-                corta finregalo
-            ultimo sigue abrecuento
-                4 finregalo
-                cierracuento
-        cierracuento finregalo
-    cierracuento
-
-    # Entrada, salida y retorno
-    cometa _prueba_ abreregalo cierraregalo abrecuento
-        # Entrada
-        escucha abreregalo cierraregalo
-
-        # Salida
-        narra abreregalo "hola" cierraregalo finregalo
-
-        # Retorno
-        envia "hola" finregalo
-    cierracuento
+    # Retorno
+    envia "hola" finregalo
+cierracuento
