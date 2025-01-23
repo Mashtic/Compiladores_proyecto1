@@ -12,11 +12,14 @@ import tokens.TokenTable;
 public class Main {
     public static void main(String[] args) {
 
+        // Nombre del archivo a evaluar
+        String nombreArchivoTest = "ejemplo2.txt";
+
         // Path del proyecto
         String currentDirectory = System.getProperty("user.dir");
 
         // Ruta del archivo de pruebas
-        String rutaArchivo = currentDirectory + "\\pruebas\\code.txt";
+        String rutaArchivo = currentDirectory + "\\pruebas\\" + nombreArchivoTest;
         String expr = FileManager.getFileContent(rutaArchivo);
 
         // Trabajo del lexer
