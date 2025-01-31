@@ -2,6 +2,7 @@ package type_table;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import type_table.ValidateTypes;
 
 public class TypeTable {
 
@@ -50,6 +51,23 @@ public class TypeTable {
         infoTabla.add(infoRow);
     }
 
+    public String getTableType(String identificador) {
+        for (HashMap.Entry<String, ArrayList<String>> entry : typeTable.entrySet()) {
+
+            // Obtiene los valores
+            ArrayList<String> row = entry.getValue();
+
+            String[] rowInfo = row.get(0).split(":"); // Ve sobre el primero de cada uno para obtener el tipo
+
+            // Reconocer si el identificador existe
+            if (rowInfo[1].equals(identificador)) {
+                return rowInfo[2];
+            }
+        }
+        return "null";
+    }
+
+
     public String getRowType(String hash,String identificador) {
         ArrayList<String> infoTabla = typeTable.get(hash);
         for (String row : infoTabla) {
@@ -79,5 +97,4 @@ public class TypeTable {
         }
         return res;
     }
-
 }

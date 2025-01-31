@@ -18,7 +18,7 @@ rodolfo  _verano_  abreregalo  cierraregalo   abrecuento
 			_var_  entrega  _var_ intercambio 1 finregalo  #semantico
 		 cierracuento
 
-		 elfo   abreregalo _var_ mary 0 cierraregalo 
+		 elfo   abreregalo _var_ melchor 0 cierraregalo
 		 abrecuento 
 			 narra  abreregalo "entra al  elfo " cierraregalo  finregalo 
 		 cierracuento 

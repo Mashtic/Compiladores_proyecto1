@@ -8,12 +8,12 @@ import java.io.StringReader;
 
 import java_cup.runtime.Symbol;
 import tokens.TokenTable;
+import type_table.ValidateTypes;
 
 public class Main {
     public static void main(String[] args) {
-
         // Nombre del archivo a evaluar
-        String nombreArchivoTest = "ejemplo2.txt";
+        String nombreArchivoTest = "code.txt";
 
         // Path del proyecto
         String currentDirectory = System.getProperty("user.dir");

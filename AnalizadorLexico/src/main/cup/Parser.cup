@@ -3,6 +3,7 @@ package cup;
 import java_cup.runtime.*;
 import jflex.LexerCup;
 import type_table.TypeTable;
+import type_table.ValidateTypes;
 
 //////////////////////// Código ////////////////////////
 action code
@@ -10,23 +11,44 @@ action code
     // Tabla de tipos
     public TypeTable typeTable = new TypeTable();
 
-    // Manejo de errores
-    public int contadorErrores = 0;
+    // Manejo de errores Sintacticos
+    public int contadorErroresSintacticos = 0;
 
-    public void revisionCodigo(){
-        if (contadorErrores == 0){
-            System.out.println("Código semánticamente bien estructurado");
+    public void revisionSintacticaCodigo(){
+        if (contadorErroresSintacticos == 0){
+            System.out.println("Código sintácticamente bien estructurado");
         }
         else{
-            throw new Error("Cantidad de errores semánticos encontrados: " + contadorErrores);
+            throw new Error("Cantidad de errores sintácticos encontrados: " + contadorErroresSintacticos);
         }
     }
 
-    public void errorEncontrado(){
-        contadorErrores += 1;
+    public void errorSintacticoEncontrado(){
+        contadorErroresSintacticos += 1;
         System.out.println("Sentencia mal estructurada");
-        System.out.println("Revise la semántica");
+        System.out.println("Revise la sintaxis");
     }
+
+    // Manejo de errores semanticos
+        public int contadorErroresSemanticos = 0;
+
+        public void revisionSemanticaCodigo(){
+            if (contadorErroresSemanticos == 0){
+                System.out.println("Código semánticamente bien estructurado");
+            }
+            else{
+                throw new Error("Cantidad de errores semánticos encontrados: " + contadorErroresSemanticos);
+            }
+        }
+
+        public void errorSemanticoEncontrado(String val, String explicacion){
+            contadorErroresSemanticos += 1;
+            System.out.println("");
+            System.out.println("Error semántico recuperable de semántica:" + val);
+            System.out.println(explicacion);
+            System.out.println("Sentencia mal estructurada");
+            System.out.println("Revise la semántica");
+        }
 :}
 
 parser code {:
@@ -43,14 +65,14 @@ parser code {:
     // Recuperación de errores
     public void syntax_error(Symbol s){
         System.out.println("");
-        System.out.println("Error R de sintáxis:" + s.value);
+        System.out.println("Error sintáctico recuperable de sintáxis:" + s.value);
         System.out.println("Línea:" + (s.left+1));
         System.out.println("Columna:" + (s.right+1));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
         System.out.println("");
-        System.out.println("Error NR de sintáxis:" + s.value);
+        System.out.println("Error sintáctico no recuperable de sintáxis:" + s.value);
         System.out.println("Línea:" + (s.left+1));
         System.out.println("Columna:" + (s.right+1));
     }
@@ -109,7 +131,7 @@ non terminal func_call, parametros_call, param_call_aux;
 non terminal parametros, param_aux, parametro;
 
 /* Bloques */
-non terminal bloque, instrucciones, sentencia;
+non terminal bloque, instrucciones, instruccion, estructuras, sentencia;
 
 /* Expresiones */
 non terminal expresion, expresion_aritmetica, expresion_relacional, expresion_logica;
@@ -169,9 +191,10 @@ start with programa;
 /********************** Programa **********************/
 /* Sirve para revisar los errores del código y mostrar la tabla de símbolos */
 programa ::= funciones {:
-                        revisionCodigo();
-                        System.out.println(typeTable.toString());
-                   :};
+                            revisionSintacticaCodigo();
+                            revisionSemanticaCodigo();
+                            System.out.println(typeTable.toString());
+                       :};
 
 /********************** Funciones **********************/
 funciones ::= funcion               // Reducción
@@ -180,11 +203,11 @@ funciones ::= funcion               // Reducción
 funcion ::= encabezado_func bloque;
 
 encabezado_func ::= tipos:t identificador_func:id parametros
-                    {: typeTable.addTable(t.toString(), id.toString()); :}; //
+                    {: typeTable.addTable(t.toString(), id.toString()); :};
                     
 /********************** Llamado de función **********************/
 
-func_call ::= IDENTIFICADOR parametros_call;
+func_call ::= IDENTIFICADOR:i parametros_call {: RESULT = i.toString(); :}; // Deberían comprobarse parámetros
 
 parametros_call ::= PARENTESIS_A PARENTESIS_C
              | PARENTESIS_A param_call_aux PARENTESIS_C;
@@ -196,6 +219,7 @@ param_call_aux ::= expresion
 parametros ::= PARENTESIS_A PARENTESIS_C            // Cero argumentos
             | PARENTESIS_A param_aux PARENTESIS_C;  // Uno o más argumentos
 
+
 param_aux ::= parametro
             | param_aux COMA parametro;
 
@@ -204,60 +228,126 @@ parametro ::= tipos IDENTIFICADOR;
 /********************** Bloques **********************/
 bloque ::= BLOQUE_A instrucciones BLOQUE_C;
 
-instrucciones ::= sentencia
-                | instrucciones sentencia;
+instrucciones ::= instruccion
+                | instrucciones instruccion;
 
-sentencia ::= expresion DELIMITADOR
-            | creacion DELIMITADOR
-            | asignacion DELIMITADOR
-            | condicional
-            | iteracion
-            | switch
-            | entrada DELIMITADOR
-            | salida DELIMITADOR
-            | return DELIMITADOR
-            | break DELIMITADOR
-            | PARENTESIS_A sentencia PARENTESIS_C
-            | error:e DELIMITADOR {: errorEncontrado(); :}
-            | error:e BLOQUE_C {: errorEncontrado(); :};
+instruccion ::= estructuras
+                | sentencia DELIMITADOR
+                | error:e DELIMITADOR {: errorSintacticoEncontrado(); :}
+                | error:e BLOQUE_C {: errorSintacticoEncontrado(); :};
+
+estructuras ::= condicional
+              | iteracion
+              | switch;
+
+sentencia ::= expresion
+          | creacion
+          | asignacion
+          | entrada
+          | salida
+          | return
+          | break;
 
 /********************** Expresiones **********************/
-expresion ::= expresion_aritmetica
-            | expresion_relacional
-            | expresion_logica
-            | PARENTESIS_A expresion PARENTESIS_C
-            | factor;
+expresion ::= PARENTESIS_A expresion:i  PARENTESIS_C {: RESULT = i.toString(); :}
+            | expresion_logica:i   {: RESULT = i.toString(); :};
 
-expresion_aritmetica ::= expresion operadores_aritmeticos factor;
+expresion_logica ::= expresion_logica:v1 operadores_logicos:op expresion_relacional:v2 {:
+                                  if (!ValidateTypes.validateExprLog(v1.toString()) || v1.toString().equals("error")) {
+                                      errorSemanticoEncontrado(v1.toString(),
+                                      "El valor, identificador o expresión en ambos lados debe resultar en booleano");
+                                      RESULT = "error";
+                                  }
+                                  if (!ValidateTypes.validateExprLog(v2.toString()) || v2.toString().equals("error")) {
+                                      errorSemanticoEncontrado(v2.toString(),
+                                      "El valor, identificador o expresión en ambos lados debe resultar en booleano");
+                                      RESULT = "error";
+                                  }
+                                  RESULT = "expr_log";
+                              :}
+                    | NEGACION expresion_relacional:v1   {:
+                                      if (!ValidateTypes.validateExprLog(v1.toString()) || v1.toString().equals("error")) {
+                                          errorSemanticoEncontrado(v1.toString(),
+                                          "El valor, identificador o expresión debe resultar en booleano");
+                                          RESULT = "error";
+                                      }
+                                      RESULT = "expr_log";
+                                  :}
+                    | expresion_relacional:i   {: RESULT = i.toString(); :};
 
-expresion_relacional ::= expresion operadores_relacionales expresion;
+expresion_relacional ::= expresion_aritmetica:v1 operadores_relacionales:op expresion_aritmetica:v2 {:
+                                    System.out.println("v1: " + v1.toString() + " v2: " + v2.toString() + " op: " + op.toString());
+                                    if (ValidateTypes.validateExprRelNum(v1.toString(), v2.toString(), op.toString()) && !v1.toString().equals("error") && !v2.toString().equals("error")) {
+                                        RESULT = "expr_rel";
 
-expresion_logica ::= expresion operadores_logicos expresion
-                    | NEGACION expresion;
+                                    }
+                                    else if (!ValidateTypes.validateExprRelBool(v1.toString(), v2.toString(), op.toString())) {
+                                        errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
+                                        "El valor, identificador o expresión en ambos lados debe resultar en booleano");
+                                        RESULT = "error";
+                                    }
+                                    else{
+                                        errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
+                                        "El valor, identificador o expresión en ambos lados debe resultar en integer o float");
+                                        RESULT = "error";
+                                    }
+                                :}
+                        | expresion_aritmetica:i   {: RESULT = i.toString(); :};
+
+expresion_aritmetica ::= expresion_aritmetica:v1 operadores_aritmeticos factor:v2 {:
+                                                            if (!ValidateTypes.validateNumber(v1.toString())) {
+                                                                errorSemanticoEncontrado(v1.toString(),
+                                                                "El valor o identificador deber ser entero o decimal");
+                                                                RESULT = "error";
+                                                            }
+                                                            if (!ValidateTypes.validateNumber(v2.toString())) {
+                                                                errorSemanticoEncontrado(v2.toString(),
+                                                                "El valor o identificador deber ser entero o decimal");
+                                                                RESULT = "error";
+                                                            }
+                                                            RESULT = "expr_arit";
+                                                        :}
+                       | factor:i   {: RESULT = i.toString(); :};
 
 /********************** Creaciones **********************/
 creacion ::= creacion_variable
             | creacion_arreglos;
             
-creacion_izq ::= tipos:t IDENTIFICADOR:id {: typeTable.addRow(t.toString(), id.toString()); :};      
+creacion_izq ::= tipos:t IDENTIFICADOR:id   {:
+                                                typeTable.addRow(t.toString(), id.toString());
+                                                RESULT = t.toString();
+                                            :};
 
-creacion_variable ::= creacion_izq 
-                | creacion_izq ASIGNACION expresion;
+creacion_variable ::= creacion_izq:t {: RESULT = t.toString(); :}
+                | creacion_izq:t ASIGNACION expresion:exp
+                {:
+                    if (!ValidateTypes.validateTypesAsign(ValidateTypes.getType(t.toString()), exp.toString())){
+                        errorSemanticoEncontrado(ValidateTypes.getType(t.toString()) + " -> " + exp.toString(),
+                                                "El tipo de la variable no coincide con el valor asignado");
+                        RESULT = "error";
+                    }
+                :};
 
-creacion_arreglos ::= creacion_izq CORCHETE_A expresion CORCHETE_C
-                | creacion_izq CORCHETE_A expresion CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C
-                | creacion_izq CORCHETE_A CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C;
+creacion_arreglos ::= creacion_izq:t CORCHETE_A expresion CORCHETE_C // Falta
+                | creacion_izq:t CORCHETE_A expresion CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C
+                | creacion_izq:t CORCHETE_A CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C;
 
 /********************** Asignaciones **********************/
 asignacion ::= asignacion_variable
-             | asignacion_arreglos
-             | asignacion_operacion;
+             | asignacion_arreglos;
 
-asignacion_variable ::= IDENTIFICADOR ASIGNACION expresion;
+asignacion_variable ::= IDENTIFICADOR:id ASIGNACION expresion:exp {:
+                           if (!ValidateTypes.validateTypesAsign(
+                                                        ValidateTypes.getType(
+                                                            typeTable.getRowTypeCurrentHash(id.toString())),
+                                                        exp.toString())){
+                               errorSemanticoEncontrado(ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString())) + " -> " + exp.toString(),
+                                                       "El tipo de la variable no coincide con el valor asignado");
+                               RESULT = "error";
+                           }
+                       :};
 
 asignacion_arreglos ::= IDENTIFICADOR CORCHETE_A expresion CORCHETE_C ASIGNACION expresion;
-
-asignacion_operacion ::= IDENTIFICADOR operadores_aritmeticos ASIGNACION expresion;
 
 /********************** Condicionales **********************/
 condicional ::= condicional_aux
@@ -266,16 +356,18 @@ condicional ::= condicional_aux
 condicional_aux ::= condicional_if
                 | condicional_aux condicional_if;
 
-condicional_if ::= IF PARENTESIS_A expresion PARENTESIS_C bloque;
+condicional_if ::= IF PARENTESIS_A expresion_relacional PARENTESIS_C bloque;
 
 /********************** Iteraciones **********************/
 iteracion ::= iteracion_while
             | iteracion_for;
 
-iteracion_while ::= WHILE PARENTESIS_A expresion PARENTESIS_C bloque;
+iteracion_while ::= WHILE PARENTESIS_A expresion_relacional PARENTESIS_C bloque;
 
-iteracion_for ::= FOR PARENTESIS_A creacion_variable PUNTO_COMA expresion PUNTO_COMA operacion_unaria PARENTESIS_C bloque
-                | FOR PARENTESIS_A asignacion_variable PUNTO_COMA expresion PUNTO_COMA operacion_unaria PARENTESIS_C bloque;
+iteracion_for ::= FOR PARENTESIS_A creacion_variable PUNTO_COMA expresion_relacional PUNTO_COMA
+                                    operacion_unaria PARENTESIS_C bloque
+                | FOR PARENTESIS_A asignacion_variable PUNTO_COMA expresion_relacional PUNTO_COMA
+                                    operacion_unaria PARENTESIS_C bloque;
 
 /********************** Switch **********************/
 switch ::= SWITCH PARENTESIS_A expresion PARENTESIS_C BLOQUE_A casos_con_default BLOQUE_C;
@@ -301,12 +393,20 @@ return ::= RETURN
           | RETURN expresion;
 
 /********************** Generales **********************/
-factor ::= IDENTIFICADOR
-        | IDENTIFICADOR CORCHETE_A expresion CORCHETE_C
-        | literales
-        | operacion_unaria
-        | num_negativos
-        | func_call;
+factor ::= IDENTIFICADOR:i  {: RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(i.toString())); :}
+        | IDENTIFICADOR:i CORCHETE_A expresion:exp CORCHETE_C
+         {:
+            if (!ValidateTypes.validateNumber(exp.toString())){
+                errorSemanticoEncontrado(exp.toString(),
+                "La posición del arreglo debe ser un valor entero");
+                RESULT = "error";
+            }
+            RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(i.toString()));
+        :}
+        | literales:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
+        | operacion_unaria:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
+        | num_negativos:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
+        | func_call:i  {: RESULT = ValidateTypes.getType(typeTable.getTableType(i.toString())); :};
 
 tipos ::= INTEGER:i {: RESULT = i.toString(); :}
         | FLOAT:i {: RESULT = i.toString(); :}
@@ -320,11 +420,11 @@ literales ::= LIT_INTEGER:i {: RESULT = i.toString(); :}
             | LIT_STRING:i {: RESULT = i.toString(); :}
             | LIT_BOOL:i {: RESULT = i.toString(); :};
 
-num_negativos ::= NEGATIVO LIT_INTEGER:i {: RESULT = i.toString(); :}
-                | NEGATIVO LIT_FLOAT:i {: RESULT = i.toString(); :}
-                | NEGATIVO IDENTIFICADOR:i {: RESULT = i.toString(); :};
+num_negativos ::= NEGATIVO LIT_INTEGER:i {: RESULT = "-"+i.toString(); :}
+                | NEGATIVO LIT_FLOAT:i {: RESULT = "-"+i.toString(); :}
+                | NEGATIVO IDENTIFICADOR:i {: RESULT = "-"+i.toString(); :};
 
-operacion_unaria ::= IDENTIFICADOR operadores_unarios;
+operacion_unaria ::= IDENTIFICADOR:i operadores_unarios {: RESULT = i.toString(); :} ;
 
 valores_arreglos ::= expresion
                     | valores_arreglos COMA expresion;
