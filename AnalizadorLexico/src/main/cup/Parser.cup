@@ -4,14 +4,26 @@ import java_cup.runtime.*;
 import jflex.LexerCup;
 import type_table.TypeTable;
 import type_table.ValidateTypes;
+import java.util.Arrays;
 
 //////////////////////// Código ////////////////////////
 action code
 {:
+    // Ubicación
+    public int numFunc = 0;
+    public int numSent = 0;
+
+    public int cantParam = 0;
+
+    public void incNumSent(){
+        numSent = numSent+1;
+    }
+
     // Tabla de tipos
     public TypeTable typeTable = new TypeTable();
 
-    // Manejo de errores Sintacticos
+    // Manejo de errores
+    // Errores sintacticos
     public int contadorErroresSintacticos = 0;
 
     public void revisionSintacticaCodigo(){
@@ -29,30 +41,97 @@ action code
         System.out.println("Revise la sintaxis");
     }
 
-    // Manejo de errores semanticos
-        public int contadorErroresSemanticos = 0;
+    // Errores semanticos
+    public int contadorErroresSemanticos = 0;
 
-        public void revisionSemanticaCodigo(){
-            if (contadorErroresSemanticos == 0){
-                System.out.println("Código semánticamente bien estructurado");
-            }
-            else{
-                throw new Error("Cantidad de errores semánticos encontrados: " + contadorErroresSemanticos);
-            }
+    public void revisionSemanticaCodigo(){
+        if (contadorErroresSemanticos == 0){
+            System.out.println("Código semánticamente bien estructurado");
         }
+        else{
+            throw new Error("Cantidad de errores semánticos encontrados: " + contadorErroresSemanticos);
+        }
+    }
 
-        public void errorSemanticoEncontrado(String val, String explicacion){
-            contadorErroresSemanticos += 1;
-            System.out.println("");
-            System.out.println("Error semántico recuperable de semántica:" + val);
-            System.out.println(explicacion);
-            System.out.println("Sentencia mal estructurada");
-            System.out.println("Revise la semántica");
+    public void errorSemanticoEncontrado(String val, String explicacion){
+        contadorErroresSemanticos += 1;
+        System.out.println("");
+        System.out.println("Error Semántico #" + Integer.toString(contadorErroresSemanticos));
+        System.out.println("Error semántico recuperable de semántica:" + val);
+        System.out.println(explicacion);
+        System.out.println("Función #" + numFunc);
+        System.out.println("Sentencia #" + numSent);
+    }
+
+    // Producciones
+    public boolean existingFunction(String id){
+        return !typeTable.getTableType(id).equals(ValidateTypes.ERROR);
+    }
+
+    public boolean existingIdScope(String id){
+        return !typeTable.getRowTypeCurrentHash(id).equals(ValidateTypes.ERROR);
+    }
+
+    public String getTypeIdScope(String id){
+        return typeTable.getRowTypeCurrentHash(id);
+    }
+
+    public String compareTypes(String exp_1, String exp_2){
+        String expS_1 = ValidateTypes.getType(exp_1);
+        String expS_2 = ValidateTypes.getType(exp_2);
+        if (expS_1.equals(ValidateTypes.ERROR) || expS_2.toString().equals(ValidateTypes.ERROR)) {
+            return ValidateTypes.ERROR;
         }
+        else if (!expS_1.equals(expS_2)) {
+            return ValidateTypes.ERROR;
+        }
+        else{
+            return ValidateTypes.getType(expS_1.toString());
+        }
+    }
+
+    public String getVariableTypeNum(String id){
+        if (!existingIdScope(id.toString())){
+            errorSemanticoEncontrado(id.toString(),
+            "El identificador no se declaró previamente en la función");
+            return ValidateTypes.ERROR;
+        }
+        else if (!validateNumber(id.toString())){
+            errorSemanticoEncontrado(id.toString(),
+            "El identificador debe ser de tipo entero o float");
+            return ValidateTypes.ERROR;
+        }
+        else {
+            return getTypeIdScope(id.toString());
+        }
+    }
+
+    public String getFuncCall(String i, String p){
+        boolean flag_param = ValidateTypes.validateCallFuncTypes(p.toString(),
+                                    typeTable.getTableParamsType(i.toString()));
+        if (!existingFunction(i.toString())) {
+            errorSemanticoEncontrado(i.toString(),
+            "La función no se ha encontrado");
+            return ValidateTypes.ERROR;
+        }
+        else if (!flag_param) {
+            errorSemanticoEncontrado(i.toString(),
+            "Los parámetros de la función no coinciden con la llamada");
+            return ValidateTypes.ERROR;
+        }
+        else {
+            return ValidateTypes.getType(typeTable.getTableType(i));
+        }
+    }
+
+    public boolean validateNumber(String id){
+        String val = typeTable.getRowTypeCurrentHash(id);;
+        return ValidateTypes.validateNumber(val);
+    }
 :}
 
 parser code {:
-    
+
     // Lectura de los tokens
     LexerCup lexer;
 
@@ -61,7 +140,7 @@ parser code {:
         this.lexer = lexer;
         this.symbolFactory = new DefaultSymbolFactory();
     }
-    
+
     // Recuperación de errores
     public void syntax_error(Symbol s){
         System.out.println("");
@@ -137,10 +216,10 @@ non terminal bloque, instrucciones, instruccion, estructuras, sentencia;
 non terminal expresion, expresion_aritmetica, expresion_relacional, expresion_logica;
 
 /* Creaciones */
-non terminal creacion, creacion_izq, creacion_variable, creacion_arreglos;
+non terminal creacion, creacion_variable, creacion_arreglos;
 
 /* Asignaciones */
-non terminal asignacion, asignacion_variable, asignacion_arreglos, asignacion_operacion;
+non terminal asignacion, asignacion_variable, asignacion_arreglos;
 
 /* Condicionales */
 non terminal condicional, condicional_aux, condicional_if;
@@ -182,7 +261,7 @@ precedence left CONJUNCION, DISYUNCION;
 precedence left NEGACION;
 
 // Otros
-precedence left DELIMITADOR, PARENTESIS_C, IF, IDENTIFICADOR;
+precedence left DELIMITADOR, PARENTESIS_C, IF, IDENTIFICADOR, CORCHETE_A;
 
 //////////////////////// Producciones ////////////////////////
 /********************** Inicio **********************/
@@ -191,39 +270,73 @@ start with programa;
 /********************** Programa **********************/
 /* Sirve para revisar los errores del código y mostrar la tabla de símbolos */
 programa ::= funciones {:
+                            System.out.println(typeTable.toString());
                             revisionSintacticaCodigo();
                             revisionSemanticaCodigo();
-                            System.out.println(typeTable.toString());
                        :};
 
 /********************** Funciones **********************/
 funciones ::= funcion               // Reducción
             | funciones funcion;    // Recursividad de funciones
 
-funcion ::= encabezado_func bloque;
+identificador_func ::= IDENTIFICADOR:i {: RESULT = i.toString(); :}
+                    | MAIN:i {: RESULT = i.toString(); :};
 
-encabezado_func ::= tipos:t identificador_func:id parametros
-                    {: typeTable.addTable(t.toString(), id.toString()); :};
-                    
-/********************** Llamado de función **********************/
+encabezado_func ::= tipos:t identificador_func:id parametros:p
+                    {:
+                        if (existingFunction(id.toString())) {
+                            errorSemanticoEncontrado(id.toString(),
+                              "La función se definió previamente en el código");
+                              RESULT = "error";
+                        }
 
-func_call ::= IDENTIFICADOR:i parametros_call {: RESULT = i.toString(); :}; // Deberían comprobarse parámetros
+                        if (!p.toString().equals("null")){
+                            String[] paramsInfo;
+                            if (p.toString().contains(":")) {
+                                paramsInfo = p.toString().split(":");
+                            } else {
+                                paramsInfo = new String[]{p.toString()};
+                            }
+                            String resultParam = "";
+                            for (int i = 0; i < paramsInfo.length; i++) {
+                                String[] paramInfo = paramsInfo[i].split("-");
+                                resultParam += paramInfo[0];
+                                if (i != paramsInfo.length-1){
+                                    resultParam += ":";
+                                }
+                            }
+                            typeTable.addTable(t.toString(), id.toString(), resultParam);
 
-parametros_call ::= PARENTESIS_A PARENTESIS_C
-             | PARENTESIS_A param_call_aux PARENTESIS_C;
+                            for (int i = 0; i < paramsInfo.length; i++) {
+                                String[] paramInfo = paramsInfo[i].split("-");
+                                typeTable.addRow(paramInfo[1], paramInfo[2], paramInfo[3]);
+                            }
+                        }
+                        else{
+                            typeTable.addTable(t.toString(), id.toString(), "null");
+                        }
+                    :};
 
-param_call_aux ::= expresion
-                 | param_call_aux COMA expresion;
+funcion ::= {: numFunc += 1; numSent = 0; :} encabezado_func bloque;
 
 /********************** Parámetros **********************/
-parametros ::= PARENTESIS_A PARENTESIS_C            // Cero argumentos
-            | PARENTESIS_A param_aux PARENTESIS_C;  // Uno o más argumentos
+parametros ::= PARENTESIS_A PARENTESIS_C  {: RESULT = "null"; :}           // Cero argumentos
+            | PARENTESIS_A param_aux:p PARENTESIS_C {: RESULT = p.toString(); :};  // Uno o más argumentos
 
 
-param_aux ::= parametro
-            | param_aux COMA parametro;
+param_aux ::= parametro:p {: RESULT = p.toString(); :}
+            | param_aux:p1 COMA parametro:p2 {: RESULT = p1.toString() + ":" + p2.toString(); :};
 
-parametro ::= tipos IDENTIFICADOR;
+parametro ::= tipos:t IDENTIFICADOR:id {:
+                                        if (existingIdScope(id.toString())) {
+                                            errorSemanticoEncontrado(id.toString(),
+                                              "El parámetro se definió previamente en la función");
+                                              RESULT = ValidateTypes.ERROR;
+                                        }
+                                        else{
+                                            RESULT = ValidateTypes.getType(t.toString()) + "-" + t.toString() + "-" + id.toString() + "-" + "asignado";
+                                        }
+                                    :};
 
 /********************** Bloques **********************/
 bloque ::= BLOQUE_A instrucciones BLOQUE_C;
@@ -231,8 +344,8 @@ bloque ::= BLOQUE_A instrucciones BLOQUE_C;
 instrucciones ::= instruccion
                 | instrucciones instruccion;
 
-instruccion ::= estructuras
-                | sentencia DELIMITADOR
+instruccion ::= {: incNumSent(); :} estructuras
+                | {: incNumSent(); :} sentencia DELIMITADOR
                 | error:e DELIMITADOR {: errorSintacticoEncontrado(); :}
                 | error:e BLOQUE_C {: errorSintacticoEncontrado(); :};
 
@@ -253,101 +366,187 @@ expresion ::= PARENTESIS_A expresion:i  PARENTESIS_C {: RESULT = i.toString(); :
             | expresion_logica:i   {: RESULT = i.toString(); :};
 
 expresion_logica ::= expresion_logica:v1 operadores_logicos:op expresion_relacional:v2 {:
-                                  if (!ValidateTypes.validateExprLog(v1.toString()) || v1.toString().equals("error")) {
-                                      errorSemanticoEncontrado(v1.toString(),
+                                  if (!ValidateTypes.validateExprLog(v1.toString()) || !ValidateTypes.validateExprLog(v2.toString())) {
+                                      errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
                                       "El valor, identificador o expresión en ambos lados debe resultar en booleano");
-                                      RESULT = "error";
+                                      RESULT = ValidateTypes.ERROR;
                                   }
-                                  if (!ValidateTypes.validateExprLog(v2.toString()) || v2.toString().equals("error")) {
-                                      errorSemanticoEncontrado(v2.toString(),
-                                      "El valor, identificador o expresión en ambos lados debe resultar en booleano");
-                                      RESULT = "error";
-                                  }
-                                  RESULT = "expr_log";
+                                  else{
+                                      RESULT = ValidateTypes.E_BOOL;
+                                    }
                               :}
-                    | NEGACION expresion_relacional:v1   {:
-                                      if (!ValidateTypes.validateExprLog(v1.toString()) || v1.toString().equals("error")) {
-                                          errorSemanticoEncontrado(v1.toString(),
-                                          "El valor, identificador o expresión debe resultar en booleano");
-                                          RESULT = "error";
+                    | NEGACION:n expresion_relacional:v1   {:
+                                      if (!ValidateTypes.validateExprLog(v1.toString())) {
+                                          errorSemanticoEncontrado(n.toString() + " " + v1.toString(),
+                                          "El valor, identificador o expresión negado debe resultar en booleano");
+                                          RESULT = ValidateTypes.ERROR;
                                       }
-                                      RESULT = "expr_log";
+                                      else{
+                                        RESULT = ValidateTypes.E_BOOL;
+                                      }
                                   :}
                     | expresion_relacional:i   {: RESULT = i.toString(); :};
 
 expresion_relacional ::= expresion_aritmetica:v1 operadores_relacionales:op expresion_aritmetica:v2 {:
-                                    System.out.println("v1: " + v1.toString() + " v2: " + v2.toString() + " op: " + op.toString());
-                                    if (ValidateTypes.validateExprRelNum(v1.toString(), v2.toString(), op.toString()) && !v1.toString().equals("error") && !v2.toString().equals("error")) {
-                                        RESULT = "expr_rel";
-
+                                    if (ValidateTypes.validateExprRelNum(v1.toString(), v2.toString(), op.toString()) ||
+                                        ValidateTypes.validateExprRelBool(v1.toString(), v2.toString(), op.toString())){
+                                        RESULT = ValidateTypes.E_BOOL;
                                     }
-                                    else if (!ValidateTypes.validateExprRelBool(v1.toString(), v2.toString(), op.toString())) {
+                                    else {
                                         errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
-                                        "El valor, identificador o expresión en ambos lados debe resultar en booleano");
-                                        RESULT = "error";
-                                    }
-                                    else{
-                                        errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
-                                        "El valor, identificador o expresión en ambos lados debe resultar en integer o float");
-                                        RESULT = "error";
+                                        "El valor, identificador o expresión en ambos lados debe resultar en booleano o integer/float");
+                                        RESULT = ValidateTypes.ERROR;
                                     }
                                 :}
+                         | PARENTESIS_A expresion_relacional:i PARENTESIS_C  {: RESULT = i.toString(); :}
                         | expresion_aritmetica:i   {: RESULT = i.toString(); :};
 
-expresion_aritmetica ::= expresion_aritmetica:v1 operadores_aritmeticos factor:v2 {:
-                                                            if (!ValidateTypes.validateNumber(v1.toString())) {
-                                                                errorSemanticoEncontrado(v1.toString(),
-                                                                "El valor o identificador deber ser entero o decimal");
-                                                                RESULT = "error";
-                                                            }
-                                                            if (!ValidateTypes.validateNumber(v2.toString())) {
-                                                                errorSemanticoEncontrado(v2.toString(),
-                                                                "El valor o identificador deber ser entero o decimal");
-                                                                RESULT = "error";
-                                                            }
-                                                            RESULT = "expr_arit";
-                                                        :}
+expresion_aritmetica ::= expresion_aritmetica:v1 operadores_aritmeticos:op factor:v2 {:
+                                        if (!ValidateTypes.validateNumber(v1.toString())) {
+                                            errorSemanticoEncontrado(v1.toString() + " " + op.toString() + " " + v2.toString(),
+                                            "El valor o identificador deber ser entero o decimal");
+                                            RESULT = ValidateTypes.ERROR;
+                                        }
+                                        else if (!ValidateTypes.validateNumber(v2.toString())) {
+                                            errorSemanticoEncontrado(v2.toString(),
+                                            "El valor o identificador deber ser entero o decimal");
+                                            RESULT = ValidateTypes.ERROR;
+                                        }
+                                        else {
+                                            RESULT = ValidateTypes.evaluateResultExpr(v1.toString(), v2.toString());
+                                        }
+                                    :}
+                       | PARENTESIS_A expresion_aritmetica:i PARENTESIS_C  {: RESULT = i.toString(); :}
                        | factor:i   {: RESULT = i.toString(); :};
 
 /********************** Creaciones **********************/
 creacion ::= creacion_variable
             | creacion_arreglos;
-            
-creacion_izq ::= tipos:t IDENTIFICADOR:id   {:
-                                                typeTable.addRow(t.toString(), id.toString());
-                                                RESULT = t.toString();
-                                            :};
 
-creacion_variable ::= creacion_izq:t {: RESULT = t.toString(); :}
-                | creacion_izq:t ASIGNACION expresion:exp
+creacion_variable ::= tipos:t IDENTIFICADOR:id {: typeTable.addRow(t.toString(), id.toString(), "declarado");
+                                                  RESULT = t.toString(); :}
+                | tipos:t IDENTIFICADOR:id ASIGNACION expresion:exp
                 {:
-                    if (!ValidateTypes.validateTypesAsign(ValidateTypes.getType(t.toString()), exp.toString())){
+                    if (existingIdScope(id.toString())) {
+                        errorSemanticoEncontrado(id.toString(),
+                          "La variable se definió previamente en la función");
+                          RESULT = ValidateTypes.ERROR;
+                    }
+                    else if (!ValidateTypes.validateTypesAsign(ValidateTypes.getType(t.toString()), exp.toString())){
                         errorSemanticoEncontrado(ValidateTypes.getType(t.toString()) + " -> " + exp.toString(),
                                                 "El tipo de la variable no coincide con el valor asignado");
-                        RESULT = "error";
+                        RESULT = ValidateTypes.ERROR;
+                    }
+                    else{
+                        typeTable.addRow(t.toString(), id.toString(), "asignado");
+                        RESULT = t.toString();
                     }
                 :};
 
-creacion_arreglos ::= creacion_izq:t CORCHETE_A expresion CORCHETE_C // Falta
-                | creacion_izq:t CORCHETE_A expresion CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C
-                | creacion_izq:t CORCHETE_A CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos CORCHETE_C;
+creacion_arreglos ::= tipos:t IDENTIFICADOR:id CORCHETE_A expresion_aritmetica:exp CORCHETE_C
+            {:
+                if (existingIdScope(id.toString())) {
+                    errorSemanticoEncontrado(id.toString(),
+                      "La variable se definió previamente en la función");
+                      RESULT = ValidateTypes.ERROR;
+                }
+                else if (!ValidateTypes.validateInteger(exp.toString())){
+                    errorSemanticoEncontrado(t.toString() + " [ " + exp.toString() + " ]",
+                                       "Dentro de los corchetes, debe ingresarse un entero para indicar su tamaño");
+                    RESULT = ValidateTypes.ERROR;
+                }
+                else{
+                    typeTable.addRow(t.toString(), id.toString(), "declarado");
+                    RESULT = t.toString();
+                }
+            :}
+                | tipos:t IDENTIFICADOR:id CORCHETE_A expresion_aritmetica:exp CORCHETE_C ASIGNACION CORCHETE_A valores_arreglos:val CORCHETE_C
+                {:
+                    if (existingIdScope(id.toString())) {
+                        errorSemanticoEncontrado(id.toString(),
+                          "La variable se definió previamente en la función");
+                          RESULT = ValidateTypes.ERROR;
+                    }
+                    else if (!ValidateTypes.validateInteger(exp.toString())){
+                        errorSemanticoEncontrado(t.toString() + " [ " + exp.toString() + " ]",
+                                           "Dentro de los corchetes, debe ingresarse un entero para indicar su tamaño");
+                        RESULT = ValidateTypes.ERROR;
+                    }
+                    else if (!ValidateTypes.validateTypesAsign(
+                                        ValidateTypes.getType(t.toString()),
+                                        val.toString())){
+                        errorSemanticoEncontrado(t.toString() + " -> " + val.toString(),
+                                           "El tipo de la variable no coincide con el valor asignado");
+                        RESULT = ValidateTypes.ERROR;
+                    }
+                    else{
+                        typeTable.addRow(t.toString(), id.toString(), "asignado");
+                        RESULT = t.toString();
+                    }
+                :}
+                | tipos:t IDENTIFICADOR:id CORCHETE_A CORCHETE_C ASIGNACION CORCHETE_A expresion:val CORCHETE_C
+                {:
+                    if (existingIdScope(id.toString())) {
+                        errorSemanticoEncontrado(id.toString(),
+                          "La variable se definió previamente en la función");
+                          RESULT = ValidateTypes.ERROR;
+                    }
+                    else if (!ValidateTypes.validateTypesAsign(
+                                        ValidateTypes.getType(t.toString()),
+                                        val.toString())){
+                        errorSemanticoEncontrado(t.toString() + " -> " + val.toString(),
+                                           "El tipo de la variable no coincide con el valor asignado");
+                        RESULT = ValidateTypes.ERROR;
+                    }
+                    else{
+                        typeTable.addRow(t.toString(), id.toString(), "asignado");
+                        RESULT = t.toString();
+                    }
+                :};
 
 /********************** Asignaciones **********************/
 asignacion ::= asignacion_variable
              | asignacion_arreglos;
 
 asignacion_variable ::= IDENTIFICADOR:id ASIGNACION expresion:exp {:
-                           if (!ValidateTypes.validateTypesAsign(
+                           if (!existingIdScope(id.toString())){
+                               errorSemanticoEncontrado(id.toString(),
+                               "El identificador no se declaró previamente en la función");
+                               RESULT = ValidateTypes.ERROR;
+                           }
+                           else if (!ValidateTypes.validateTypesAsign(
                                                         ValidateTypes.getType(
                                                             typeTable.getRowTypeCurrentHash(id.toString())),
                                                         exp.toString())){
                                errorSemanticoEncontrado(ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString())) + " -> " + exp.toString(),
                                                        "El tipo de la variable no coincide con el valor asignado");
-                               RESULT = "error";
+                               RESULT = ValidateTypes.ERROR;
                            }
+                           else { typeTable.updateRowStatus(id.toString()); }
                        :};
 
-asignacion_arreglos ::= IDENTIFICADOR CORCHETE_A expresion CORCHETE_C ASIGNACION expresion;
+asignacion_arreglos ::= IDENTIFICADOR:id CORCHETE_A expresion_aritmetica:exp_a CORCHETE_C ASIGNACION expresion:exp
+                        {:
+                           if (!existingIdScope(id.toString())){
+                               errorSemanticoEncontrado(id.toString(),
+                               "El identificador no se declaró previamente en la función");
+                               RESULT = ValidateTypes.ERROR;
+                           }
+                           else if (!ValidateTypes.validateNumber(exp_a.toString())){
+                             errorSemanticoEncontrado(exp_a.toString(),
+                             "La posición del arreglo debe ser un valor entero");
+                             RESULT = ValidateTypes.ERROR;
+                           }
+                           else if (!ValidateTypes.validateTypesAsign(
+                                                        ValidateTypes.getType(
+                                                            typeTable.getRowTypeCurrentHash(id.toString())),
+                                                        exp.toString())){
+                               errorSemanticoEncontrado(ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString())) + " -> " + exp.toString(),
+                                                       "El tipo de la variable no coincide con el valor asignado");
+                               RESULT = ValidateTypes.ERROR;
+                           }
+                           else { typeTable.updateRowStatus(id.toString()); }
+                       :};
 
 /********************** Condicionales **********************/
 condicional ::= condicional_aux
@@ -356,57 +555,213 @@ condicional ::= condicional_aux
 condicional_aux ::= condicional_if
                 | condicional_aux condicional_if;
 
-condicional_if ::= IF PARENTESIS_A expresion_relacional PARENTESIS_C bloque;
+condicional_if ::= IF PARENTESIS_A expresion_relacional:exp PARENTESIS_C bloque
+                    {:
+                        if (!ValidateTypes.validateExprLog(exp.toString())) {
+                              errorSemanticoEncontrado("if (" + exp.toString() + ")",
+                              "El valor, identificador o expresión debe resultar en booleano");
+                              RESULT = ValidateTypes.ERROR;
+                          }
+                    :};
 
 /********************** Iteraciones **********************/
 iteracion ::= iteracion_while
             | iteracion_for;
 
-iteracion_while ::= WHILE PARENTESIS_A expresion_relacional PARENTESIS_C bloque;
+iteracion_while ::= WHILE PARENTESIS_A expresion_relacional:exp PARENTESIS_C bloque
+                    {:
+                        if (!ValidateTypes.validateExprLog(exp.toString())) {
+                              errorSemanticoEncontrado("while (" + exp.toString() + ")",
+                              "El valor, identificador o expresión debe resultar en booleano");
+                              RESULT = ValidateTypes.ERROR;
+                          }
+                    :};
 
-iteracion_for ::= FOR PARENTESIS_A creacion_variable PUNTO_COMA expresion_relacional PUNTO_COMA
-                                    operacion_unaria PARENTESIS_C bloque
-                | FOR PARENTESIS_A asignacion_variable PUNTO_COMA expresion_relacional PUNTO_COMA
-                                    operacion_unaria PARENTESIS_C bloque;
+iteracion_for ::= FOR PARENTESIS_A creacion_variable:crea PUNTO_COMA expresion_relacional:exp PUNTO_COMA
+                                    operacion_unaria:op PARENTESIS_C bloque
+                    {:
+                        if (crea.toString().equals(ValidateTypes.ERROR)){
+                            errorSemanticoEncontrado("for ( " + crea.toString()+ " )",
+                              "La creación cuenta con errores");
+                              RESULT = ValidateTypes.ERROR;
+                        }
+                        if (!ValidateTypes.validateExprLog(exp.toString())) {
+                              errorSemanticoEncontrado("for ( " + exp.toString() + " )",
+                              "El valor, identificador o expresión de la expresión debe resultar en booleano");
+                              RESULT = ValidateTypes.ERROR;
+                          }
+                        if (op.toString().equals(ValidateTypes.ERROR)){
+                              errorSemanticoEncontrado("for ( " + op.toString() + " )",
+                              "La expresión debe ser de la forma 'número operador_unario'");
+                              RESULT = ValidateTypes.ERROR;
+                          }
+                    :}
+                | FOR PARENTESIS_A asignacion_variable:asign PUNTO_COMA expresion_relacional:exp PUNTO_COMA
+                                    operacion_unaria:op PARENTESIS_C bloque
+                {:
+                    if (asign.toString().equals(ValidateTypes.ERROR)){
+                        errorSemanticoEncontrado("for ( " + asign.toString()+ " )",
+                          "La asginación cuenta con errores semánticos");
+                          RESULT = ValidateTypes.ERROR;
+                    }
+                    if (!ValidateTypes.validateExprLog(exp.toString())) {
+                          errorSemanticoEncontrado("for ( " + exp.toString() + " )",
+                          "El valor, identificador o expresión de la expresión debe resultar en booleano");
+                          RESULT = ValidateTypes.ERROR;
+                      }
+                    if (op.toString().equals(ValidateTypes.ERROR)){
+                          errorSemanticoEncontrado("for ( " + op.toString() + " )",
+                          "La expresión debe ser de la forma 'número operador_unario'");
+                          RESULT = ValidateTypes.ERROR;
+                      }
+                :};
 
 /********************** Switch **********************/
-switch ::= SWITCH PARENTESIS_A expresion PARENTESIS_C BLOQUE_A casos_con_default BLOQUE_C;
+switch ::= SWITCH PARENTESIS_A expresion:exp_1 PARENTESIS_C BLOQUE_A casos_con_default:exp_2 BLOQUE_C
+                {:
+                    if (!ValidateTypes.validateTypesAsign(exp_1.toString(), exp_2.toString())){
+                        errorSemanticoEncontrado(exp_1.toString() + " -> " + exp_2.toString(),
+                                                "El valor comparado con los case es diferente");
+                        RESULT = ValidateTypes.ERROR;
+                    }
+                :};
 
-casos_con_default ::= casos_aux
-                    | casos_aux DEFAULT DOS_PUNTOS instrucciones;
+casos_con_default ::= casos_aux:exp_1 {: RESULT = exp_1.toString(); :}
+                    | casos_aux:exp_1 DEFAULT DOS_PUNTOS instrucciones {: RESULT = exp_1.toString(); :};
 
-casos_aux ::= caso
-        | casos_aux caso;
+casos_aux ::= caso:exp_1 {: RESULT = ValidateTypes.getType(exp_1.toString()); :}
+        | casos_aux:exp_1 caso:exp_2 {:
+            String expS_1 = ValidateTypes.getType(exp_1.toString());
+            String expS_2 = ValidateTypes.getType(exp_2.toString());
+            if (expS_1.equals(ValidateTypes.ERROR) || expS_2.toString().equals(ValidateTypes.ERROR)) {
+                RESULT = ValidateTypes.ERROR;
+            }
+            else if (expS_1.equals(expS_2)) {
+                RESULT = expS_1;
+            }
+            else{
+                RESULT = ValidateTypes.ERROR;
+            }
+        :};
 
-caso ::= CASE literales DOS_PUNTOS instrucciones;
+caso ::= CASE literales:i DOS_PUNTOS instrucciones {: RESULT = i.toString(); :};
 
 /********************** Entrada y salida **********************/
-entrada ::= READ PARENTESIS_A IDENTIFICADOR PARENTESIS_C;
+entrada ::= READ PARENTESIS_A IDENTIFICADOR:id PARENTESIS_C
+            {:
+                if (!existingIdScope(id.toString())){
+                    errorSemanticoEncontrado("READ ( " + id.toString() + " )",
+                    "La variable no se declaró previamente a su llamado");
+                    RESULT = ValidateTypes.ERROR;
+                }
+                else if (!ValidateTypes.validatePrintRead(ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString())))){
+                    errorSemanticoEncontrado("PRINT ( " + ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString())) + " )",
+                      "La expresión debe ser char, string, int o float");
+                      RESULT = ValidateTypes.ERROR;
+                }
+                else { typeTable.updateRowStatus(id.toString()); }
+            :};
 
-salida ::= PRINT PARENTESIS_A expresion PARENTESIS_C ;
+salida ::= PRINT PARENTESIS_A expresion:exp PARENTESIS_C
+            {:
+                String expS_1 = exp.toString();
+                if (expS_1.equals(ValidateTypes.ERROR)) {
+                      errorSemanticoEncontrado("PRINT ( " + exp.toString() + " )",
+                      "La expresión tuvo un error al definirse");
+                      RESULT = ValidateTypes.ERROR;
+                }
+                else if (!ValidateTypes.validatePrintRead(exp.toString())){
+                    errorSemanticoEncontrado("PRINT ( " + exp.toString() + " )",
+                      "La expresión debe ser char, string, int o float");
+                      RESULT = ValidateTypes.ERROR;
+                }
+            :};
 
 /********************** Break **********************/
 break ::= BREAK;
 
 /********************** Retorno **********************/
 return ::= RETURN
-          | RETURN expresion;
+          | RETURN expresion:exp {:
+                                 String expS_1 = exp.toString();
+                                 if (expS_1.equals(ValidateTypes.ERROR)) {
+                                   errorSemanticoEncontrado("PRINT ( " + exp.toString() + " )",
+                                   "La expresión retornada tuvo un error al definirse");
+                                   RESULT = ValidateTypes.ERROR;
+                                 }
+                                 else if (!ValidateTypes.getType(typeTable.getTableTypeCurrentHash()).equals(exp.toString())){
+                                    errorSemanticoEncontrado(ValidateTypes.getType(typeTable.getTableTypeCurrentHash()) + " -> " + exp.toString(),
+                                       "Se intenta retornar un tipo distinto al de la función");
+                                       RESULT = ValidateTypes.ERROR;
+                                 }
+                                 RESULT = "ok";
+                             :};
 
 /********************** Generales **********************/
-factor ::= IDENTIFICADOR:i  {: RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(i.toString())); :}
-        | IDENTIFICADOR:i CORCHETE_A expresion:exp CORCHETE_C
+factor ::= IDENTIFICADOR:id  {:
+                                if (!existingIdScope(id.toString())){
+                                    errorSemanticoEncontrado(id.toString(),
+                                    "La variable no se declaró previamente en la función");
+                                    RESULT = ValidateTypes.ERROR;
+                                }
+                                else if (typeTable.getRowStatus(id.toString()).equals("declarado")){
+                                   errorSemanticoEncontrado(id.toString(),
+                                   "La variable no se le ha asignado un valor");
+                                   RESULT = ValidateTypes.ERROR;
+                                }
+                                else {
+                                    RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString()));
+                                }
+                            :}
+        | IDENTIFICADOR:id CORCHETE_A expresion_aritmetica:exp CORCHETE_C
          {:
-            if (!ValidateTypes.validateNumber(exp.toString())){
-                errorSemanticoEncontrado(exp.toString(),
-                "La posición del arreglo debe ser un valor entero");
-                RESULT = "error";
+            if (!existingIdScope(id.toString())){
+                errorSemanticoEncontrado(id.toString(),
+                "La variable no se declaró previamente en la función");
+                RESULT = ValidateTypes.ERROR;
             }
-            RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(i.toString()));
+            else if (!ValidateTypes.validateNumber(exp.toString())){
+              errorSemanticoEncontrado(exp.toString(),
+              "La posición del arreglo debe ser un valor entero");
+              RESULT = ValidateTypes.ERROR;
+            }
+            else if (typeTable.getRowStatus(id.toString()).equals("declarado")){
+               errorSemanticoEncontrado(id.toString(),
+               "La variable no se le ha asignado un valor");
+               RESULT = ValidateTypes.ERROR;
+            }
+            else {
+                RESULT = ValidateTypes.getType(typeTable.getRowTypeCurrentHash(id.toString()));
+            }
         :}
         | literales:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
         | operacion_unaria:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
         | num_negativos:i  {: RESULT = ValidateTypes.getType(i.toString()); :}
-        | func_call:i  {: RESULT = ValidateTypes.getType(typeTable.getTableType(i.toString())); :};
+        | func_call:i  {: RESULT = ValidateTypes.getType(i.toString()); :};
+
+func_call ::= IDENTIFICADOR:i parametros_call:p {:
+                                                    boolean flag_param = ValidateTypes.validateCallFuncTypes(p.toString(),
+                                                                                typeTable.getTableParamsType(i.toString()));
+                                                    if (!existingFunction(i.toString())) {
+                                                        errorSemanticoEncontrado(i.toString(),
+                                                        "La función no se ha declarado");
+                                                        RESULT = ValidateTypes.ERROR;
+                                                    }
+                                                    else if (!flag_param) {
+                                                        errorSemanticoEncontrado(i.toString(),
+                                                        "Los parámetros de la función no coinciden con la llamada");
+                                                        RESULT = ValidateTypes.ERROR;
+                                                    }
+                                                    else {
+                                                        RESULT = typeTable.getTableType(i.toString());
+                                                    }
+                                                :};
+
+parametros_call ::= PARENTESIS_A PARENTESIS_C {: RESULT = "null"; :}
+             | PARENTESIS_A param_call_aux:p PARENTESIS_C {: RESULT = p.toString(); :};
+
+param_call_aux ::= expresion:p  {: RESULT = p.toString(); :}
+                 | param_call_aux:p1 COMA expresion:p2  {: RESULT = p1.toString() + ":" + p2.toString(); :};
 
 tipos ::= INTEGER:i {: RESULT = i.toString(); :}
         | FLOAT:i {: RESULT = i.toString(); :}
@@ -420,17 +775,66 @@ literales ::= LIT_INTEGER:i {: RESULT = i.toString(); :}
             | LIT_STRING:i {: RESULT = i.toString(); :}
             | LIT_BOOL:i {: RESULT = i.toString(); :};
 
-num_negativos ::= NEGATIVO LIT_INTEGER:i {: RESULT = "-"+i.toString(); :}
-                | NEGATIVO LIT_FLOAT:i {: RESULT = "-"+i.toString(); :}
-                | NEGATIVO IDENTIFICADOR:i {: RESULT = "-"+i.toString(); :};
+num_negativos ::= NEGATIVO LIT_INTEGER:i {: RESULT = i.toString(); :}
+                | NEGATIVO LIT_FLOAT:i {: RESULT = i.toString(); :}
+                | NEGATIVO IDENTIFICADOR:id {:
+                                                if (!existingIdScope(id.toString())){
+                                                    errorSemanticoEncontrado(id.toString(),
+                                                    "El identificador no se declaró previamente en la función");
+                                                    RESULT = ValidateTypes.ERROR;
+                                                }
+                                                else if (!validateNumber(id.toString())){
+                                                    errorSemanticoEncontrado(id.toString(),
+                                                    "El identificador debe ser de tipo entero o float");
+                                                    RESULT = ValidateTypes.ERROR;
+                                                }
+                                                else if (typeTable.getRowStatus(id.toString()).equals("declarado")){
+                                                   errorSemanticoEncontrado(id.toString(),
+                                                   "La variable no se le ha asignado un valor");
+                                                   RESULT = ValidateTypes.ERROR;
+                                                }
+                                                else {
+                                                    RESULT = typeTable.getRowTypeCurrentHash(id.toString());
+                                                }
+                                            :};
 
-operacion_unaria ::= IDENTIFICADOR:i operadores_unarios {: RESULT = i.toString(); :} ;
+operacion_unaria ::= IDENTIFICADOR:id operadores_unarios
+                    {:
+                        if (!existingIdScope(id.toString())){
+                           errorSemanticoEncontrado(id.toString(),
+                           "El identificador no se declaró previamente en la función");
+                           RESULT = ValidateTypes.ERROR;
+                        }
+                        else if (!validateNumber(id.toString())){
+                           errorSemanticoEncontrado(id.toString(),
+                           "El identificador debe ser de tipo entero o float");
+                           RESULT = ValidateTypes.ERROR;
+                        }
+                        else if (typeTable.getRowStatus(id.toString()).equals("declarado")){
+                           errorSemanticoEncontrado(id.toString(),
+                           "La variable no se le ha asignado un valor");
+                           RESULT = ValidateTypes.ERROR;
+                        }
+                        else {
+                           RESULT = typeTable.getRowTypeCurrentHash(id.toString());
+                        }
+                    :};
 
-valores_arreglos ::= expresion
-                    | valores_arreglos COMA expresion;
-
-identificador_func ::= IDENTIFICADOR:i {: RESULT = i.toString(); :}
-                    | MAIN:i {: RESULT = i.toString(); :};
+valores_arreglos ::= expresion:exp {: RESULT = ValidateTypes.getType(exp.toString()); :}
+                    | valores_arreglos:exp_1 COMA expresion:exp_2
+                        {:
+                           String expS_1 = ValidateTypes.getType(exp_1.toString());
+                           String expS_2 = ValidateTypes.getType(exp_2.toString());
+                           if (expS_1.equals(ValidateTypes.ERROR) || expS_2.toString().equals(ValidateTypes.ERROR)) {
+                               RESULT = ValidateTypes.ERROR;
+                           }
+                           else if (!expS_1.equals(expS_2)) {
+                               RESULT = ValidateTypes.ERROR;
+                           }
+                           else{
+                               RESULT = ValidateTypes.getType(expS_1.toString());
+                           }
+                       :};
 
 /********************** Operadores **********************/
 operadores_aritmeticos ::= SUMA:i {: RESULT = i.toString(); :}

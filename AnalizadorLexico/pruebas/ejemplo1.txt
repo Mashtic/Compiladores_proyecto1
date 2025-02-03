@@ -1,4 +1,4 @@
- bromista  _func1_  abreregalo  cupido  _x22_ ,   cupido  _x22_ cierraregalo   abrecuento
+bromista  _func1_  abreregalo  cupido  _x22_ cierraregalo   abrecuento
 	 cupido  _x22_ entrega 'a' finregalo
 	 cupido  _miChar_ entrega '!'  finregalo #error sintactico
 	 cupido  _miChar2_ entrega '!' finregalo  #sintactico-semantico
@@ -6,14 +6,6 @@
 	 trueno  _x40_ entrega false finregalo
 	 cupido  _x50_ abreempaque 1000 cierraempaque  finregalo
 	 cometa  _x50_ entrega "Hola a todos los que est abreempaque a cierraempaque  haciendo un compilador nuevo\n" finregalo
-	 elfo  abreregalo _x22_ evergreen 45 melchor _var_ minstix 5.6 cierraregalo  abrecuento  #semantico x22 ,  var
-		 rodolfo  _y_ finregalo
-		_x22_ entrega 10 finregalo
-		 cupido  _ch33_ entrega 'a' finregalo
-	 cierracuento   hada   abrecuento
-		 rodolfo  _y_ finregalo #no error o no???
-		 cometa  _str2_ entrega "sdff" finregalo
-	 cierracuento
 	 narra  abreregalo "Hola mundo" cierraregalo  finregalo
 	 escucha  abreregalo _x22_ cierraregalo  finregalo
 	 envia -5.6 finregalo #cambio en retorno genera semantico
@@ -44,3 +36,7 @@ _/
 	 trueno  _bl1_  entrega  _in1_  upatree  _fl1_  gaspar  false  melchor   baltazar  abreregalo _func2_ abreregalo 3 , _in1_ cierraregalo   minstix  56 cierraregalo  finregalo  #semantico in1  upatree  fl1 ,  func2
 	 envia   _bl1_ finregalo  #semantico
   cierracuento
+
+  trueno  _miOtraFun_  abreregalo  cierraregalo   abrecuento
+  	 envia -5.6 finregalo  #semantico
+    cierracuento

@@ -1,18 +1,6 @@
 # Main
 # Creaciones y asignaciones
-cupido _pruebaCreacionesAsignaciones_ abreregalo cierraregalo abrecuento
-    # Creaciones (literales)
-    rodolfo _x_ finregalo
-    _x_ entrega 4 finregalo
-    bromista _y_ entrega -40.53 finregalo
-    trueno _z_ entrega true finregalo
-    cupido _i_ entrega 'A' finregalo
-    cometa _j_ entrega "hola" finregalo
-
-    # Creaciones (identificador)
-    rodolfo _perro_ entrega _x_ finregalo
-    bromista _perro_ entrega _y_  finregalo
-    trueno  _perro_ entrega _z_ finregalo
-    cupido _perro_ entrega _i_ finregalo
-    cometa _perro_ entrega _j_ finregalo
-cierracuento
+trueno  _func2_  abreregalo  trueno  _b1_ ,   rodolfo  _i1_ cierraregalo   abrecuento
+	 rodolfo _i_  finregalo
+	 _i_ entrega 3 finregalo
+  cierracuento

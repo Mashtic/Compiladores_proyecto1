@@ -8,6 +8,8 @@ public final class ValidateTypes {
 
     // Patrones
     // Definiciones básicas
+    public static final String NULL = "null";
+    public static final String ERROR = "error";
     public static final String LETRA = "[a-zA-Z]";
     public static final String DIGITO = "[0-9]";
     public static final String ESPACIO = "\\r|\\n|\\r\\n|[ \\t\\f]";
@@ -102,6 +104,7 @@ public final class ValidateTypes {
                                                                     P_MENOR_IGUAL, P_IGUALDAD, P_DIFERENTE);
     public static final List<String> L_OP_REL_BOOL = Arrays.asList(P_IGUALDAD, P_DIFERENTE);
     public static final List<String> L_EXPR_LOG = Arrays.asList(E_BOOL, E_EXPR_REL);
+    public static final List<String> L_PRINT = Arrays.asList(E_INTEGER, E_FLOAT, E_CHAR, E_STRING);
 
     // Métodos
     public static String getType(String token) {
@@ -161,11 +164,10 @@ public final class ValidateTypes {
         else if (Pattern.matches(P_PRINT, token)) return "print";
         else if (Pattern.matches(P_READ, token)) return "read";
 
-        return "null";
+        return ERROR;
     }
 
     public static boolean validateTypesAsign(String type, String val){
-        System.out.println("Type: " + type + " Value: " + val);
         if (L_NUMBER.contains(type) && L_NUMBER.contains(val)){
             return true;
         }
@@ -195,6 +197,10 @@ public final class ValidateTypes {
         return false;
     }
 
+    public static boolean validateInteger(String val){
+        return val.equals(E_INTEGER);
+    }
+
     public static boolean validateExprRelNum(String val_1, String val_2, String op){
         if (L_EXPR_REL_NUM.contains(val_1) && L_EXPR_REL_NUM.contains(val_2) && L_OP_REL_NUM.contains(op)){
             return true;
@@ -214,5 +220,20 @@ public final class ValidateTypes {
             return true;
         }
         return false;
+    }
+
+    public static String evaluateResultExpr(String val_1, String val_2){
+        if (val_1.equals(E_FLOAT) || val_2.equals(E_FLOAT)){
+            return E_FLOAT;
+        }
+        return E_INTEGER;
+    }
+
+    public static boolean validatePrintRead(String val_1){
+        return L_PRINT.contains(val_1);
+    }
+
+    public static boolean validateCallFuncTypes(String vals_1, String vals_2){
+        return vals_1.equals(vals_2);
     }
 }
